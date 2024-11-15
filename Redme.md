@@ -2,9 +2,15 @@
 
 ## 1. Coleta de Dados
 - **Identificação de URLs alvo**
-  - Site Mercado Livre
+  - Site Mercado Livre - ofertas
   - Análise da estrutura das páginas para garantir a extração correta das informações.
   - Identificação das tags da página que iremos ultilizar.
+        - poly-component__highlight
+        - poly-component__title
+        - poly-component__price
+        - poly-price__current
+        - andes-money-amount__discount
+        - poly-component__shipping
 
 - **Implementação de rotinas de web scraping**
     - **Scrapy**: Para criar spiders que coletam dados em larga escala de forma eficiente.
@@ -12,13 +18,15 @@
 ## 2. Transformação de Dados
 - **Estruturação de dados em Python**
   - Organizar os dados em estruturas como dicionários ou listas.
+  - Converter em Datframe com pandas
 
 - **Conversão para formato compatível com MySQL**
-  - Preparação dos dados para inserção no banco de dados, formatando como CSV ou JSON.
+  - Preparação dos dados para inserção no banco de dados do pandas
 
 ## 3. Armazenamento de Dados
 - **Configuração do Banco de Dados MySQL**
   - Criação de um banco de dados e tabelas necessárias para armazenar os dados coletados.
+  - Inseir os novos dados na tabela
 
 - **Inserção de dados coletados no MySQL**
   - Implementação de scripts Python para inserir os dados no banco de dados.
