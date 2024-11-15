@@ -5,6 +5,9 @@ class OfertasGamesSpider(scrapy.Spider):
     name = "ofertas_games"
     start_urls = ["https://lista.mercadolivre.com.br/games"]
 
+    page_count = 1
+    max_pages = 10
+
     def parse(self, response):
         produtos = response.css("div.poly-card__content")
 
@@ -29,3 +32,8 @@ class OfertasGamesSpider(scrapy.Spider):
                 'detalhe_envio': produto.css('div.poly-component__shipping::text').get(),
                 'detalhe_envio_2': produto.css('div.poly-component__shipping span::text').get()
                    }
+        if self.page_count < self.max_pages:
+            next_page = response.css('li.andes-pagination__button.andes-pagination__button--next a::attr(href)').get()
+            if next_page:
+                self.page_count += 1
+                yield scrapy.Request(url=next_page, callback=self.parse)
