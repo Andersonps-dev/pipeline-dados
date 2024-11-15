@@ -5,12 +5,12 @@
   - Site Mercado Livre - ofertas
   - Análise da estrutura das páginas para garantir a extração correta das informações.
   - Identificação das tags da página que iremos ultilizar.
-        - poly-component__highlight
-        - poly-component__title
-        - poly-component__price
-        - poly-price__current
-        - andes-money-amount__discount
-        - poly-component__shipping
+        -- poly-component__highlight
+        -- poly-component__title
+        -- poly-component__price
+        -- poly-price__current
+        -- andes-money-amount__discount
+        -- poly-component__shipping
 
 - **Implementação de rotinas de web scraping**
     - **Scrapy**: Para criar spiders que coletam dados em larga escala de forma eficiente.
