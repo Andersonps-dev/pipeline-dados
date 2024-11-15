@@ -1,1 +1,2 @@
-print('gay)
+prindofgi
+
