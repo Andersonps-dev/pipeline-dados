@@ -1,16 +1,20 @@
-# Sistema de Web Scraping e Integração
+# Coleta de Dados
 
-## 1. Coleta de Dados
-- **Identificação de URLs alvo**
-  - Site Mercado Livre - ofertas
-  - Análise da estrutura das páginas para garantir a extração correta das informações.
-  - Identificação das tags da página que iremos ultilizar.
-        -- poly-component__highlight
-        -- poly-component__title
-        -- poly-component__price
-        -- poly-price__current
-        -- andes-money-amount__discount
-        -- poly-component__shipping
+## 1. Identificação de URLs Alvo
+O objetivo é coletar informações de ofertas no site **Mercado Livre**. A seguir, detalhamos o processo:
+
+### Estrutura e Análise das Páginas
+- Foi realizada uma análise da estrutura das páginas para garantir a extração precisa das informações desejadas.
+- Identificamos as tags HTML relevantes que serão utilizadas na coleta dos dados.
+
+### Tags Identificadas
+As seguintes classes e atributos foram mapeados para a extração de informações:
+- **`poly-component__highlight`**: Indica o destaque do item na página.
+- **`poly-component__title`**: Representa o título ou nome do produto.
+- **`poly-component__price`**: Contém informações relacionadas ao preço.
+- **`poly-price__current`**: Indica o preço atual do item.
+- **`andes-money-amount__discount`**: Informa o desconto aplicado ao produto.
+- **`poly-component__shipping`**: Contém detalhes sobre o frete ou envio.
 
 - **Implementação de rotinas de web scraping**
     - **Scrapy**: Para criar spiders que coletam dados em larga escala de forma eficiente.
