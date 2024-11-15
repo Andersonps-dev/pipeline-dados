@@ -1,13 +1,13 @@
 import scrapy
 
 
-class OfertasGamesSpider(scrapy.Spider):
-    name = "ofertas_games"
-    start_urls = ["https://www.mercadolivre.com.br/ofertas?category=MLB1144"]
+class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
+    name = "ofertas_casa_moveis_decoracao"
+    start_urls = ["https://www.mercadolivre.com.br/ofertas?category=MLB1574"]
 
     page_count = 1
     max_pages = 5
-
+    
     def parse(self, response):
         produtos = response.css("div.poly-card__content")
 
@@ -31,7 +31,7 @@ class OfertasGamesSpider(scrapy.Spider):
                 'porcentagem_desconto': produto.css('span.andes-money-amount__discount::text').get(),
                 'detalhe_envio': produto.css('div.poly-component__shipping::text').get(),
                 'detalhe_envio_2': produto.css('div.poly-component__shipping span::text').get()
-                   }
+                    }
         if self.page_count < self.max_pages:
             next_page = response.css('li.andes-pagination__button.andes-pagination__button--next a::attr(href)').get()
             if next_page:
