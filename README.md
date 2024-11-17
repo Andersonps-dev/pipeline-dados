@@ -42,8 +42,8 @@ As seguintes classes e atributos foram mapeados para extração das informaçõe
 ---
 
 ## **3. Armazenamento de Dados**
-### **Banco de Dados MySQL**
-- Configuração e criação de um banco de dados.
+### **Banco de Dados Postgres**
+- Configuração e criação de um banco de dados(Render).
 - Definição de tabelas para armazenar as informações coletadas.
 
 ### **Inserção de Dados**

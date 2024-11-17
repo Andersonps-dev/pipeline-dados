@@ -20,7 +20,7 @@ class Transformacao:
         self.POSTGRES_HOST = os.getenv("POSTGRES_HOST")
         self.POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
-        self.pasta_dados = r'C:\Users\55359\Documents\My Projects\pipeline-dados\Dados'
+        self.pasta_dados = r'..\pipeline-dados\Dados'
 
     def criar_conexao(self):
         try:
@@ -50,6 +50,3 @@ class Transformacao:
                 conn.close()
         else:
             print("Conexão falhou.")
-
-transformacao = Transformacao()
-transformacao.testar_conexao()
