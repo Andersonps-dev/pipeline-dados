@@ -16,9 +16,6 @@ import asyncio
 from telegram import Bot
 from tabulate import tabulate
 
-pd.set_option("display.max_columns", None)  # Mostra todas as colunas
-pd.set_option("display.max_rows", None)     # Mostra todas as linhas
-
 class Transformacao:
     def __init__(self):
         load_dotenv()
@@ -35,12 +32,11 @@ class Transformacao:
         
         df = pd.read_json(caminho, lines=True, dtype={"preco_anterior": str, "fracao_preco_anterior":str, "preco_atual":str, "fracao_preco_atual":str})
         def limpar_numero(valor):
-            if pd.isnull(valor):  # Se o valor for nulo, mantenha como está
+            if pd.isnull(valor):
                 return valor
             return int(str(valor).replace('.', '').replace(',', ''))
 
-        colunas_substituir_none = ['preco_anterior', 'fracao_preco_anterior', 'preco_atual',
-       'fracao_preco_atual']
+        colunas_substituir_none = ['preco_anterior', 'fracao_preco_anterior', 'preco_atual', 'fracao_preco_atual']
         df[colunas_substituir_none] = df[colunas_substituir_none].replace(['None', None], 0)
 
         df["preco_anterior"] = df["preco_anterior"].apply(limpar_numero)
@@ -56,7 +52,6 @@ class Transformacao:
         df['data_coleta']  = datetime.now()
 
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='append', index=False)
-
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
