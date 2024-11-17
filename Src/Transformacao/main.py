@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 
 class Transformacao:
     def __init__(self):
+        load_dotenv()
         self.POSTGRES_DB = os.getenv("POSTGRES_DB")
         self.POSTGRES_USER = os.getenv("POSTGRES_USER")
         self.POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
@@ -20,11 +21,33 @@ class Transformacao:
         self.POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
     def criar_conexao(self):
-        conn = psycopg2.connect(
-            dbname=self.POSTGRES_DB,
-            user=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_HOST,
-            port=self.POSTGRES_PORT
-        )
-        return conn
+        try:
+            conn = psycopg2.connect(
+                dbname=self.POSTGRES_DB,
+                user=self.POSTGRES_USER,
+                password=self.POSTGRES_PASSWORD,
+                host=self.POSTGRES_HOST,
+                port=self.POSTGRES_PORT
+            )
+            return conn
+        except psycopg2.Error as e:
+            print(f"Erro ao conectar ao banco de dados: {e}")
+            return None
+    
+    def testar_conexao(self):
+        conn = self.criar_conexao()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT 1;")  # Teste simples para verificar a conexão
+                result = cursor.fetchone()
+                print("Conexão bem-sucedida, teste retornou:", result)
+            except psycopg2.Error as e:
+                print(f"Erro ao executar o teste de conexão: {e}")
+            finally:
+                conn.close()
+        else:
+            print("Conexão falhou.")
+
+transformacao = Transformacao()
+transformacao.testar_conexao()
