@@ -20,6 +20,8 @@ class Transformacao:
         self.POSTGRES_HOST = os.getenv("POSTGRES_HOST")
         self.POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
+        self.pasta_dados = r'C:\Users\55359\Documents\My Projects\pipeline-dados\Dados'
+
     def criar_conexao(self):
         try:
             conn = psycopg2.connect(
@@ -39,7 +41,7 @@ class Transformacao:
         if conn:
             try:
                 cursor = conn.cursor()
-                cursor.execute("SELECT 1;")  # Teste simples para verificar a conexão
+                cursor.execute("SELECT 1;")
                 result = cursor.fetchone()
                 print("Conexão bem-sucedida, teste retornou:", result)
             except psycopg2.Error as e:
