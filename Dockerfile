@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5432
 
 # Instrução CMD para rodar o aplicativo
-CMD ["python", "app_8_postgres.py"]
+CMD ["python", "pipeline-dados\Src\BotTelegram\NotifyOfferBot.py"]
