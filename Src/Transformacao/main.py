@@ -27,7 +27,7 @@ class Transformacao:
 
         self.pasta_dados = r'..\pipeline-dados\Dados'
     
-    def tratar_base(self, nome_arquivo=None, nome_tabela_bd=None, nome_bd='dados_coletados.bd'):
+    def tratar_base(self, conn=None, nome_arquivo=None, nome_tabela_bd=None, nome_bd='dados_coletados.db'):
         caminho = os.path.join(self.pasta_dados, nome_arquivo)
         
         df = pd.read_json(caminho, lines=True, dtype={"preco_anterior": str, "fracao_preco_anterior":str, "preco_atual":str, "fracao_preco_atual":str})
@@ -51,13 +51,15 @@ class Transformacao:
         
         df['data_coleta']  = datetime.now()
 
+        self.criar_tabela(conn, nome_tabela_bd)
+
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='append', index=False)
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
         return conn
 
-    def setup_database(self, conn, nome_tabela):
+    def criar_tabela(self, conn, nome_tabela):
         cursor = conn.cursor()
         cursor.execute(f'''
             CREATE TABLE IF NOT EXISTS {nome_tabela} (
@@ -107,9 +109,9 @@ class Transformacao:
             print("Conexão falhou.")
         
     def executor(self):
-        conn = self.criar_conexao_sqlite3("dados.db")
-        self.setup_database(conn, "dados_games")
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")
         self.tratar_base(nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
-        
+        self.tratar_base(nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
+    
 exe = Transformacao()
 exe.executor()
