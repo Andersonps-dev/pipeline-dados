@@ -4,7 +4,7 @@ import scrapy
 class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
     name = "ofertas_casa_moveis_decoracao"
     start_urls = ["https://www.mercadolivre.com.br/ofertas?category=MLB1574"]
-
+    
     page_count = 1
     max_pages = 5
     
