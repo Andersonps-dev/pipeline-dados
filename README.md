@@ -18,7 +18,7 @@ O objetivo é coletar informações de ofertas no site **Mercado Livre**. A segu
 - Identificadas as **tags HTML relevantes** para a coleta de dados.
 
 ### **Tags Identificadas**
-As seguintes classes e atributos foram mapeados para extração das informações:
+As seguintes classes e atributos foram mapeados para extração das informações:.
 - `poly-component__highlight`: Destaque do item na página.
 - `poly-component__title`: Título ou nome do produto.
 - `poly-component__price`: Informações relacionadas ao preço.
