@@ -1,4 +1,4 @@
-# **Pipeline do Projeto *
+# **Pipeline do Projeto**
 
 ## **Índice**
 - [1. Coleta dos Dados](#1-coleta-de-dados)
