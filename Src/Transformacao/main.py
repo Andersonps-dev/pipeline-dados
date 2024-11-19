@@ -52,7 +52,6 @@ class Transformacao:
         df['data_coleta']  = datetime.now()
 
         self.criar_tabela(conn, nome_tabela_bd)
-
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='append', index=False)
 
     def criar_conexao_sqlite3(self, db_name):
@@ -110,8 +109,8 @@ class Transformacao:
         
     def executor(self):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
-        self.tratar_base(nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
-        self.tratar_base(nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
+        self.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
+        self.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
     
 exe = Transformacao()
 exe.executor()
