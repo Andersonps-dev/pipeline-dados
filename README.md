@@ -11,7 +11,7 @@
 ---
 
 ## **1. Identificação de URLs Alvo**
-O objetivo é coletar informações de ofertas no site **Mercado Livre**. A seguir, detalhamos o processo
+O objetivo é coletar informações de ofertas no site **Mercado Livre**. A seguir, detalhamos o processo:
 
 ### **Estrutura e Análise das Páginas**
 - Realizada uma análise da estrutura das páginas para garantir a extração precisa das informações desejadas.
