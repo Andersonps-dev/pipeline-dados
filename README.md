@@ -70,7 +70,7 @@ As seguintes classes e atributos foram mapeados para extração das informaçõe
 
 ### **Construção e Execução**
 - **Construção**: Criação da imagem Docker com `docker build`.
-- **Execução**: Inicialização do container utilizando `docker run`.
+- **Execução**: Inicialização do container utilizando `docker run`.. #
 
 ---
 
