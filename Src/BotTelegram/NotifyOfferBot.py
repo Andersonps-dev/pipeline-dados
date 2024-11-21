@@ -46,8 +46,6 @@ def teste3(mensagem):
     print(mensagem)
     bot.send_message(mensagem.chat.id, 'https://www.mercadolivre.com.br/tenda-gazebo-sanfonado-articulada-dobravel-3x3m-com-mala-transporte-the-black-tools/p/MLB27293081?pdp_filters=item_id%3AMLB3583264727#polycard_client=offers&deal_print_id=eef2947f-3a22-4ec4-a5de-1e118834b595&wid=MLB3583264727&sid=offers')
 
-
-
 def verificar(mensagem):
     return True
 
