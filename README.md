@@ -1,7 +1,7 @@
-# **Coleta de Dados**
+# **Pipeline do Projeto**
 
 ## **Índice**
-- [1. Identificação de URLs Alvo](#1-identificação-de-urls-alvo)
+- [1. Coleta dos Dados](#1-coleta-de-dados)
 - [2. Transformação de Dados](#2-transformação-de-dados)
 - [3. Armazenamento de Dados](#3-armazenamento-de-dados)
 - [4. Notificações](#4-notificações)
@@ -10,21 +10,12 @@
 
 ---
 
-## **1. Identificação de URLs Alvo**
+## **1. Coleta de Dados**
 O objetivo é coletar informações de ofertas no site **Mercado Livre**. A seguir, detalhamos o processo:
 
 ### **Estrutura e Análise das Páginas**
 - Realizada uma análise da estrutura das páginas para garantir a extração precisa das informações desejadas.
 - Identificadas as **tags HTML relevantes** para a coleta de dados.
-
-### **Tags Identificadas**
-As seguintes classes e atributos foram mapeados para extração das informações:.
-- `poly-component__highlight`: Destaque do item na página.
-- `poly-component__title`: Título ou nome do produto.
-- `poly-component__price`: Informações relacionadas ao preço.
-- `poly-price__current`: Preço atual do item.
-- `andes-money-amount__discount`: Desconto aplicado ao produto.
-- `poly-component__shipping`: Detalhes sobre o frete ou envio.
 
 ### **Tecnologia Utilizada**
 - **Scrapy**: Framework para criar spiders que coletam dados de forma eficiente e escalável.
@@ -36,7 +27,7 @@ As seguintes classes e atributos foram mapeados para extração das informaçõe
 - Dados organizados em **dicionários** ou **listas**.
 - Conversão para **DataFrame** usando `pandas` para facilitar o processamento.
 
-### **Preparação para MySQL**
+### **Preparação para Postgress**
 - Dados transformados em formatos compatíveis para inserção em banco de dados, utilizando ferramentas como `pandas.to_sql`.
 
 ---

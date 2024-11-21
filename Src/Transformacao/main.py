@@ -65,6 +65,7 @@ class Transformacao:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 highlight TEXT,
                 titulo TEXT,
+                link TEXT,
                 vendido_por TEXT,
                 nota TEXT,
                 total_avaliacoes INTEGER,
