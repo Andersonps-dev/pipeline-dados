@@ -48,6 +48,8 @@ class Transformacao:
         df['preco_atual'] = df["preco_atual"].astype(str) + "," + df["fracao_preco_atual"].astype(str)
         
         df = df.drop(columns=['fracao_preco_anterior', 'fracao_preco_atual'])
+
+        df['portcetagem_desconto'] = df['portcetagem_desconto'].replace("% OFF", "")
         
         df['data_coleta']  = datetime.now()
 
@@ -71,7 +73,7 @@ class Transformacao:
                 total_avaliacoes INTEGER,
                 preco_anterior FLOAT,
                 preco_atual FLOAT,
-                porcentagem_desconto TEXT,
+                porcentagem_desconto INT,
                 detalhe_envio TEXT,
                 detalhe_envio_2 TEXT,
                 data_coleta DATETIME
