@@ -49,8 +49,12 @@ class Transformacao:
         
         df = df.drop(columns=['fracao_preco_anterior', 'fracao_preco_atual'])
 
-        df['portcetagem_desconto'] = df['portcetagem_desconto'].replace("% OFF", "")
+        df['porcentagem_desconto'] = df["porcentagem_desconto"].str.extract('(\d+)')
+        df['porcentagem_desconto'] = df['porcentagem_desconto'].fillna(0)
+        df['porcentagem_desconto'] = df['porcentagem_desconto'].astype(int)
         
+        df = df.sort_values('porcentagem_desconto', ascending=True)
+        df = df.drop_duplicates(subset=['titulo'], keep='last')
         df['data_coleta']  = datetime.now()
 
         self.criar_tabela(conn, nome_tabela_bd)
