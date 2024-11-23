@@ -19,19 +19,27 @@ import schedule
 class NotifyOfferBot:
     def __init__(self):
         load_dotenv()
+        self.__estancia_bot()
 
     def __estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
         self.TOPIC_ID = os.getenv('TELEGRAM_TOPIC_ID')
+
         self.bot = Bot(token=self.TOKEN)
 
     async def __enviar_telegram_message(self, text):
         await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=self.TOPIC_ID)
 
-    async def agendador(self):
+    async def envios_telegram(self):
         await self.__enviar_telegram_message("Mensagem aqui")
         await asyncio.sleep(10)
+        asyncio.run(self.envios_telegram())
 
-    def envio_posts(self):
-        asyncio.run(self.agendador())
+
+if __name__ == "__main__":
+    try:
+        exe = NotifyOfferBot()
+        exe.envios_telegram()
+    except Exception as e:
+        print(f"Erro na execução: {e}")
