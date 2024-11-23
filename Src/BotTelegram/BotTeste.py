@@ -18,7 +18,7 @@ async def send_telegram_message(text):
 async def main():
     try:
         while True:
-            mensagem = "Mensagem para o Bot"
+            mensagem = "Mensagem de teste"
             await send_telegram_message(mensagem)
             await asyncio.sleep(10)
     except KeyboardInterrupt:
