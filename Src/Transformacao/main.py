@@ -60,10 +60,6 @@ class Transformacao:
         self.criar_tabela(conn, nome_tabela_bd)
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='append', index=False)
 
-    def criar_conexao_sqlite3(self, db_name):
-        conn = sqlite3.connect(db_name)
-        return conn
-
     def criar_tabela(self, conn, nome_tabela):
         cursor = conn.cursor()
         cursor.execute(f'''
@@ -85,6 +81,10 @@ class Transformacao:
         ''')
         conn.commit()
 
+    def criar_conexao_sqlite3(self, db_name):
+        conn = sqlite3.connect(db_name)
+        return conn
+
     def criar_conexao_postgres(self):
         try:
             conn = psycopg2.connect(
@@ -98,26 +98,12 @@ class Transformacao:
         except psycopg2.Error as e:
             print(f"Erro ao conectar ao banco de dados: {e}")
             return None
-    
-    def testar_conexao_postgres(self):
-        conn = self.criar_conexao_postgres()
-        if conn:
-            try:
-                cursor = conn.cursor()
-                cursor.execute("SELECT 1;")
-                result = cursor.fetchone()
-                print("Conexão bem-sucedida, teste retornou:", result)
-            except psycopg2.Error as e:
-                print(f"Erro ao executar o teste de conexão: {e}")
-            finally:
-                conn.close()
-        else:
-            print("Conexão falhou.")
         
     def executor(self):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         self.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
         self.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
+        conn.close()
     
 exe = Transformacao()
 exe.executor()
