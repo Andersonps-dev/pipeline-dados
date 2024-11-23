@@ -31,6 +31,15 @@ class NotifyOfferBot:
     async def __enviar_telegram_message(self, text):
         await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=self.TOPIC_ID)
 
+    def filtro_envios_principais(self):
+        pass
+
+    def filtro_envios_reservas(self):
+        pass
+
+    def verificar_itens_novos(self):
+        pass
+
     async def envios_telegram(self):
         await self.__enviar_telegram_message("Mensagem aqui")
         await asyncio.sleep(10)
