@@ -27,8 +27,8 @@ class NotifyOfferBot:
 
         self.bot = Bot(token=self.TOKEN)
 
-    async def __enviar_telegram_message(self, text):
-        await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=self.TOPIC_ID)
+    async def enviar_telegram_message(self, text):
+        await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=self.TOPIC_ID, parse_mode="HTML")
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
@@ -54,25 +54,31 @@ class NotifyOfferBot:
         for i in self.filtro_envios_principais():
             titulo = i[2]
             link = i[3]
-            vendido_por = i[4]
+            vendido_por = i[4] if i[4] != None else "-"
             preco_antigo = i[7]
             preco_novo = i[8]
             porcentagem_desconto = i[9]
-            detalhe_envio = i[10]
-            detalhe_envio_2 = i[11]
-            mensagem = (
-                f"*{titulo}*\n\n"
-                f"🔥 Por apenas R$ {preco_novo} 🔥\n\n"
-                f"Preço antigo: R$ {preco_antigo} - Produto com {porcentagem_desconto}% de desconto.\n\n"
-                f"{detalhe_envio}\n\n"
-                f"{detalhe_envio_2}\n\n"
-                f"Vendido pela loja oficial: {vendido_por}\n\n"
-                f"🛒 Compre seu produto agora mesmo acessando o LINK abaixo: {link}\n\n"
-                )
+            detalhe_envio = i[10] if i[10] != None else "-"
+            detalhe_envio_2 = i[11] if i[10] != None else "-"
 
-            await self.__enviar_telegram_message(mensagem)
+            mensagem = (
+                f"<b>🌟 {titulo} 🌟</b>\n\n"  # Título estilizado
+                f"<i>✨ Oferta imperdível para você!</i>\n\n"
+                f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
+                f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
+                f"✅ <b>Desconto incrível de:</b> {porcentagem_desconto}%\n\n"
+                f"📦 <b>Observação de venda:</b>\n"
+                f"➡️ {detalhe_envio}\n"
+                f"➡️ {detalhe_envio_2}\n\n"
+                f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
+                f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
+                f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
+                f"⚡ <i>Corra, pois as ofertas podem acabar a qualquer momento!</i> ⚡"
+            )
+
+            await self.enviar_telegram_message(mensagem)
             await asyncio.sleep(10)
-    
+
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
