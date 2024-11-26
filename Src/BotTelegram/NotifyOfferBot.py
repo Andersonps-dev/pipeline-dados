@@ -28,7 +28,7 @@ class NotifyOfferBot:
 
         self.bot = Bot(token=self.TOKEN)
 
-    async def __enviar_telegram_message(self, text):
+    async def __enviar_telegram_message(self, text, parse_mode="MarkdownV2"):
         await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=self.TOPIC_ID)
 
     def criar_conexao_sqlite3(self, db_name):
@@ -71,7 +71,7 @@ class NotifyOfferBot:
                 f"🛒 Compre seu produto agora mesmo acessando o LINK abaixo: {link}\n\n"
                 )
 
-            await self.__enviar_telegram_message(mensagem)
+            await self.__enviar_telegram_message(mensagem, parse_mode="MarkdownV2")
             await asyncio.sleep(10)
     
 if __name__ == "__main__":
