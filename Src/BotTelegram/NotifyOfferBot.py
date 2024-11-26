@@ -70,7 +70,6 @@ class NotifyOfferBot:
                 f"Vendido por: {vendido_por}.\n"
                 f"🛒Compre seu proguto agora mesmo acessando o **LINK** abaixo: {link}\n")
             await asyncio.sleep(10)
-
     
 if __name__ == "__main__":
     try:
