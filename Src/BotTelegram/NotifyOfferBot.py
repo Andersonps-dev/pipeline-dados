@@ -62,18 +62,18 @@ class NotifyOfferBot:
             detalhe_envio = i[10]
             detalhe_envio_2 = i[11]
             await self.__enviar_telegram_message(
-                f"**{titulo}**\n"
-                f"🔥Por apenas R${preco_novo}🔥.\n"
-                f"Preço antigo: R${preco_antigo} - Produto com {porcentagem_desconto}% de desconto.\n"
-                f"{detalhe_envio}\n"
-                f"{detalhe_envio_2}\n"
-                f"Vendido por: {vendido_por}.\n"
-                f"🛒Compre seu proguto agora mesmo acessando o **LINK** abaixo: {link}\n")
+                f"**{titulo}**\n\n"
+                f"🔥Por apenas R$ {preco_novo}🔥\n\n"
+                f"Preço antigo: R$ {preco_antigo} - Produto com {porcentagem_desconto}% de desconto\n\n"
+                f"{detalhe_envio}\n\n"
+                f"{detalhe_envio_2}\n\n"
+                f"Vendido pela loja oficial: **{vendido_por}**\n\n"
+                f"🛒Compre seu proguto agora mesmo acessando o **LINK** abaixo: {link}\n\n")
             await asyncio.sleep(10)
     
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        asyncio.run(exe.envios_telegram())
+        asyncio.run(exe.envios_telegram(parse_mode="Markdown"))
     except Exception as e:
         print(f"Erro na execução: {e}")
