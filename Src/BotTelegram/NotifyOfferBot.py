@@ -1,20 +1,20 @@
-import telebot
-import time
+import pandas as pd
+import sqlite3
 from datetime import datetime
-import os
 import requests
-import scrapy
 import time
 import pandas as pd
 import asyncio
 from telegram import Bot
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 import psycopg2
 from sqlalchemy import create_engine
-import schedule
-import time
-import schedule
+import sqlite3
+import asyncio
+from telegram import Bot
+from tabulate import tabulate
 
 class NotifyOfferBot:
     def __init__(self):
@@ -31,8 +31,19 @@ class NotifyOfferBot:
     async def __enviar_telegram_message(self, text):
         await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=self.TOPIC_ID)
 
+    def criar_conexao_sqlite3(self, db_name):
+        conn = sqlite3.connect(db_name)
+        return conn
+    
     def filtro_envios_principais(self):
-        pass
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM  dados_casa_moveis_decoracao WHERE porcentagem_desconto >= 40 or desconto_reais >= 600 ORDER BY porcentagem_desconto DESC LIMIT 100")
+        resultado = cursor.fetchall()
+
+        cursor.close()
+        return resultado
 
     def filtro_envios_reservas(self):
         pass
@@ -41,14 +52,22 @@ class NotifyOfferBot:
         pass
 
     async def envios_telegram(self):
-        await self.__enviar_telegram_message("Mensagem aqui")
-        await asyncio.sleep(10)
-        asyncio.run(self.envios_telegram())
+        for i in self.filtro_envios_principais():
+            titulo = i[2]
+            link = i[3]
+            vendido_por = i[4]
+            preco_antigo = i[7]
+            preco_novo = i[8]
+            porcentagem_desconto = i[9]
+            detalhe_envio = i[10]
+            detalhe_envio_2 = i[11]
+            await self.__enviar_telegram_message(f"🟢{titulo}\n{link}\n{vendido_por}\n{preco_antigo} - {preco_novo}\n{porcentagem_desconto}\n{detalhe_envio}\n{detalhe_envio_2}")
+            await asyncio.sleep(10)
 
-
+    
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        exe.envios_telegram()
+        asyncio.run(exe.envios_telegram())
     except Exception as e:
         print(f"Erro na execução: {e}")
