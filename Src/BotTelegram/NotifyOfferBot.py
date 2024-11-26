@@ -13,7 +13,6 @@ import psycopg2
 from sqlalchemy import create_engine
 import sqlite3
 import asyncio
-from telegram import Bot
 from tabulate import tabulate
 
 class NotifyOfferBot:
