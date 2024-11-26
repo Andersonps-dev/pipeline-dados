@@ -61,7 +61,14 @@ class NotifyOfferBot:
             porcentagem_desconto = i[9]
             detalhe_envio = i[10]
             detalhe_envio_2 = i[11]
-            await self.__enviar_telegram_message(f"🟢{titulo}\n{link}\n{vendido_por}\n{preco_antigo} - {preco_novo}\n{porcentagem_desconto}\n{detalhe_envio}\n{detalhe_envio_2}")
+            await self.__enviar_telegram_message(
+                f"**{titulo}**\n"
+                f"🔥Por apenas R${preco_novo}🔥.\n"
+                f"Preço antigo: R${preco_antigo} - Produto com {porcentagem_desconto}% de desconto.\n"
+                f"{detalhe_envio}\n"
+                f"{detalhe_envio_2}\n"
+                f"Vendido por: {vendido_por}.\n"
+                f"🛒Compre seu proguto agora mesmo acessando o **LINK** abaixo: {link}\n")
             await asyncio.sleep(10)
 
     
