@@ -23,22 +23,21 @@ class NotifyOfferBot:
     def __estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-        self.TOPIC_ID = os.getenv('TELEGRAM_TOPIC_ID')
 
         self.bot = Bot(token=self.TOKEN)
 
-    async def enviar_telegram_message(self, text):
-        await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=self.TOPIC_ID, parse_mode="HTML")
+    async def enviar_telegram_message(self, text, topic_id):
+        await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=topic_id, parse_mode="HTML")
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
         return conn
     
-    def filtro_envios_principais(self):
+    def filtro_envios_principais(self, tabela):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        cursor.execute("SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM  dados_casa_moveis_decoracao WHERE porcentagem_desconto >= 40 or desconto_reais >= 600 ORDER BY porcentagem_desconto DESC LIMIT 100")
+        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM  {tabela} WHERE porcentagem_desconto >= 40 or desconto_reais >= 600 ORDER BY porcentagem_desconto DESC LIMIT 100")
         resultado = cursor.fetchall()
 
         cursor.close()
@@ -50,8 +49,8 @@ class NotifyOfferBot:
     def verificar_itens_novos(self):
         pass
 
-    async def envios_telegram(self):
-        for i in self.filtro_envios_principais():
+    async def envios_telegram(self, tabela, topic_id):
+        for i in self.filtro_envios_principais(tabela):
             titulo = i[2]
             link = i[3]
             vendido_por = i[4] if i[4] != None else "-"
@@ -59,10 +58,10 @@ class NotifyOfferBot:
             preco_novo = i[8]
             porcentagem_desconto = i[9]
             detalhe_envio = i[10] if i[10] != None else "-"
-            detalhe_envio_2 = i[11] if i[10] != None else "-"
+            detalhe_envio_2 = i[11] if i[11] != None else "-"
 
             mensagem = (
-                f"<b>🌟 {titulo} 🌟</b>\n\n"  # Título estilizado
+                f"<b>🌟 {titulo} 🌟</b>\n\n"
                 f"<i>✨ Oferta imperdível para você!</i>\n\n"
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
@@ -76,12 +75,13 @@ class NotifyOfferBot:
                 f"⚡ <i>Corra, pois as ofertas podem acabar a qualquer momento!</i> ⚡"
             )
 
-            await self.enviar_telegram_message(mensagem)
+            await self.enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(10)
 
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        asyncio.run(exe.envios_telegram())
+        asyncio.run(exe.envios_telegram("dados_games", "2"))
+        asyncio.run(exe.envios_telegram("dados_casa_moveis_decoracao", "4"))
     except Exception as e:
         print(f"Erro na execução: {e}")
