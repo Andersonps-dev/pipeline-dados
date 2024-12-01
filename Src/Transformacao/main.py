@@ -58,7 +58,7 @@ class Transformacao:
         df['data_coleta']  = datetime.now()
 
         self.criar_tabela(conn, nome_tabela_bd)
-        df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='append', index=False)
+        df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='replace', index=False)
 
     def criar_tabela(self, conn, nome_tabela):
         cursor = conn.cursor()

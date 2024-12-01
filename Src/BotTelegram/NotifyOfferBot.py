@@ -37,7 +37,9 @@ class NotifyOfferBot:
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM  {tabela} WHERE porcentagem_desconto >= 40 or desconto_reais >= 600 ORDER BY porcentagem_desconto DESC LIMIT 100")
+        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM  
+                       {tabela} WHERE porcentagem_desconto >= 40 or desconto_reais >= 
+                       600 ORDER BY porcentagem_desconto DESC LIMIT 100")
         resultado = cursor.fetchall()
 
         cursor.close()
