@@ -37,9 +37,7 @@ class NotifyOfferBot:
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM  
-                       {tabela} WHERE porcentagem_desconto >= 40 or desconto_reais >= 
-                       600 ORDER BY porcentagem_desconto DESC LIMIT 100")
+        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= 40 or desconto_reais >= 600 ORDER BY porcentagem_desconto DESC LIMIT 100")
         resultado = cursor.fetchall()
 
         cursor.close()
@@ -53,18 +51,19 @@ class NotifyOfferBot:
 
     async def envios_telegram(self, tabela, topic_id):
         for i in self.filtro_envios_principais(tabela):
-            titulo = i[2]
-            link = i[3]
-            vendido_por = i[4] if i[4] != None else "-"
-            preco_antigo = i[7]
-            preco_novo = i[8]
-            porcentagem_desconto = i[9]
-            detalhe_envio = i[10] if i[10] != None else "-"
-            detalhe_envio_2 = i[11] if i[11] != None else "-"
+            highlight = i[0] if i[0] != None else "-"
+            titulo = i[1]
+            link = i[2]
+            vendido_por = i[3] if i[3] != None else "-"
+            preco_antigo = i[6]
+            preco_novo = i[7]
+            porcentagem_desconto = i[8]
+            detalhe_envio = i[9] if i[9] != None else "-"
+            detalhe_envio_2 = i[10] if i[10] != None else "-"
 
             mensagem = (
                 f"<b>🌟 {titulo} 🌟</b>\n\n"
-                f"<i>✨ Oferta imperdível para você!</i>\n\n"
+                f"<i>✨ Oferta imperdível para você! {highlight} ✨</i>\n\n"
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
                 f"✅ <b>Desconto incrível de:</b> {porcentagem_desconto}%\n\n"
