@@ -31,8 +31,8 @@ class ExecutorDeScripts:
     def executar_todos(self):
         try:
             print("Iniciando execução dos scripts...")
-            # self.executar_scrapy()
-            # self.executar_main()
+            self.executar_scrapy()
+            self.executar_main()
             self.executar_bot()
             print("Todos os scripts foram executados com sucesso!")
         except subprocess.CalledProcessError as e:
