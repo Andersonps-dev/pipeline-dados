@@ -3,17 +3,12 @@ import sqlite3
 from datetime import datetime
 import requests
 import time
-import pandas as pd
 import asyncio
 from telegram import Bot
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 import psycopg2
 from sqlalchemy import create_engine
-import sqlite3
-import asyncio
-from telegram import Bot
 from tabulate import tabulate
 
 class Transformacao:
@@ -105,5 +100,9 @@ class Transformacao:
         self.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
         conn.close()
 
-exe = Transformacao()
-exe.executor()
+if __name__ == "__main__":
+    try:
+        exe = Transformacao()
+        exe.executor()
+    except Exception as e:
+        print(f"Erro na execução: {e}")
