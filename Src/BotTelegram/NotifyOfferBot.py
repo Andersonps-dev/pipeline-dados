@@ -1,5 +1,3 @@
-import pandas as pd
-import sqlite3
 from datetime import datetime
 import requests
 import time
@@ -12,7 +10,6 @@ from dotenv import load_dotenv
 import psycopg2
 from sqlalchemy import create_engine
 import sqlite3
-import asyncio
 from tabulate import tabulate
 
 class NotifyOfferBot:
@@ -31,7 +28,7 @@ class NotifyOfferBot:
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
-        return conn
+        return conn    
     
     def filtro_envios_principais(self, tabela):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
@@ -43,10 +40,10 @@ class NotifyOfferBot:
         cursor.close()
         return resultado
 
-    def filtro_envios_reservas(self):
+    def verificar_itens_novos(self):
         pass
 
-    def verificar_itens_novos(self):
+    def filtro_envios_reservas(self):
         pass
 
     async def envios_telegram(self, tabela, topic_id):
@@ -82,7 +79,7 @@ class NotifyOfferBot:
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        asyncio.run(exe.envios_telegram("dados_games", "2"))
-        asyncio.run(exe.envios_telegram("dados_casa_moveis_decoracao", "4"))
+        # asyncio.run(exe.envios_telegram("dados_games", "2"))
+        # asyncio.run(exe.envios_telegram("dados_casa_moveis_decoracao", "4"))
     except Exception as e:
         print(f"Erro na execução: {e}")
