@@ -41,27 +41,48 @@ class NotifyOfferBot:
         return resultado
 
     def salvar_consulta_anterior(self, tabela):
-        resultado = self.filtro_envios_principais(tabela)
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
+        # Realiza a consulta
+        cursor.execute(f"""
+            SELECT *,
+                (preco_anterior - preco_atual) AS desconto_reais 
+            FROM {tabela} 
+            WHERE porcentagem_desconto >= 40 OR desconto_reais >= 600 
+            ORDER BY porcentagem_desconto DESC 
+            LIMIT 100
+        """)
+        resultado = cursor.fetchall()
+
+        # Cria a nova tabela, se necessário
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS envios_principais (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT,
+                highlight TEXT,
+                titulo TEXT,
+                link TEXT,
+                vendido_por TEXT,
+                nota REAL,
+                total_avaliacoes INTEGER,
                 preco_anterior REAL,
                 preco_atual REAL,
                 porcentagem_desconto REAL,
+                detalhe_envio TEXT,
+                detalhe_envio_2 TEXT,
+                data_coleta TEXT,
                 desconto_reais REAL
             )
         """)
 
+    # Insere os dados na tabela
         for row in resultado:
             cursor.execute("""
                 INSERT INTO envios_principais (
-                    nome, preco_anterior, preco_atual, porcentagem_desconto, desconto_reais
-                ) VALUES (?, ?, ?, ?, ?)
-            """, (row[1], row[2], row[3], row[4], row[-1]))
+                    highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
+                    preco_anterior, preco_atual, porcentagem_desconto, detalhe_envio, 
+                    detalhe_envio_2, data_coleta, desconto_reais
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, row)
 
         conn.commit()
         cursor.close()
