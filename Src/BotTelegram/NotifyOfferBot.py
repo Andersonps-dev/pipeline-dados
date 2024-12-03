@@ -5,7 +5,6 @@ import pandas as pd
 import asyncio
 from telegram import Bot
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 import psycopg2
 from sqlalchemy import create_engine
@@ -40,7 +39,7 @@ class NotifyOfferBot:
         cursor.close()
         return resultado
 
-    def salvar_consulta_anterior(self, tabela):
+    def salvar_consulta_anterior(self, tabela_atual, tabela_anterior):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -48,7 +47,7 @@ class NotifyOfferBot:
         cursor.execute(f"""
             SELECT *,
                 (preco_anterior - preco_atual) AS desconto_reais 
-            FROM {tabela} 
+            FROM {tabela_atual} 
             WHERE porcentagem_desconto >= 40 OR desconto_reais >= 600 
             ORDER BY porcentagem_desconto DESC 
             LIMIT 100
@@ -56,8 +55,8 @@ class NotifyOfferBot:
         resultado = cursor.fetchall()
 
         # Cria a nova tabela, se necessário
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS envios_principais (
+        cursor.execute(f"""
+            CREATE TABLE IF NOT EXISTS {tabela_anterior} (
                 highlight TEXT,
                 titulo TEXT,
                 link TEXT,
@@ -76,8 +75,8 @@ class NotifyOfferBot:
 
     # Insere os dados na tabela
         for row in resultado:
-            cursor.execute("""
-                INSERT INTO envios_principais (
+            cursor.execute(f"""
+                INSERT INTO {tabela_anterior} (
                     highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
                     preco_anterior, preco_atual, porcentagem_desconto, detalhe_envio, 
                     detalhe_envio_2, data_coleta, desconto_reais
@@ -126,8 +125,9 @@ class NotifyOfferBot:
 
 if __name__ == "__main__":
     try:
-        exe = NotifyOfferBot()
+        # exe = NotifyOfferBot()
         # asyncio.run(exe.envios_telegram("dados_games", "2"))
         # asyncio.run(exe.envios_telegram("dados_casa_moveis_decoracao", "4"))
+        # exe.salvar_consulta_anterior("dados_games", "dados_games_anterior")
     except Exception as e:
         print(f"Erro na execução: {e}")
