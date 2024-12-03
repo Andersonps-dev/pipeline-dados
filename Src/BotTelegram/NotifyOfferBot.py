@@ -40,6 +40,33 @@ class NotifyOfferBot:
         cursor.close()
         return resultado
 
+    def salvar_consulta_anterior(self, tabela):
+        resultado = self.filtro_envios_principais(tabela)
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS envios_principais (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT,
+                preco_anterior REAL,
+                preco_atual REAL,
+                porcentagem_desconto REAL,
+                desconto_reais REAL
+            )
+        """)
+
+        for row in resultado:
+            cursor.execute("""
+                INSERT INTO envios_principais (
+                    nome, preco_anterior, preco_atual, porcentagem_desconto, desconto_reais
+                ) VALUES (?, ?, ?, ?, ?)
+            """, (row[1], row[2], row[3], row[4], row[-1]))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
     def verificar_itens_novos(self):
         pass
 
