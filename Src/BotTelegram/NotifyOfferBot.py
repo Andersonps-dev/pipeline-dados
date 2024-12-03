@@ -125,7 +125,7 @@ class NotifyOfferBot:
 
 if __name__ == "__main__":
     try:
-        # exe = NotifyOfferBot()
+        exe = NotifyOfferBot()
         # asyncio.run(exe.envios_telegram("dados_games", "2"))
         # asyncio.run(exe.envios_telegram("dados_casa_moveis_decoracao", "4"))
         # exe.salvar_consulta_anterior("dados_games", "dados_games_anterior")
