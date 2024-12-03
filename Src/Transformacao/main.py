@@ -10,8 +10,13 @@ from dotenv import load_dotenv
 import psycopg2
 from sqlalchemy import create_engine
 from tabulate import tabulate
+import sys
 
-class Transformacao:
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.insert(0, 'path/to/your/py_file')
+from BotTelegram.NotifyOfferBot import *
+
+class Transformacao(NotifyOfferBot):
     def __init__(self):
         load_dotenv()
         self.POSTGRES_DB = os.getenv("POSTGRES_DB")

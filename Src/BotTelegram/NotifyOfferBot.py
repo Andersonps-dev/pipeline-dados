@@ -10,6 +10,9 @@ import psycopg2
 from sqlalchemy import create_engine
 import sqlite3
 from tabulate import tabulate
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 class NotifyOfferBot:
     def __init__(self):
@@ -121,7 +124,7 @@ class NotifyOfferBot:
             )
 
             await self.enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(10)
+            await asyncio.sleep(5)
 
 if __name__ == "__main__":
     try:
