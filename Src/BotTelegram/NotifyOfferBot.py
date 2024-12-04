@@ -78,8 +78,6 @@ class NotifyOfferBot:
             await self.enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(5)
 
-import asyncio
-
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
