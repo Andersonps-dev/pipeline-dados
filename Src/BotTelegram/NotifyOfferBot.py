@@ -41,6 +41,16 @@ class NotifyOfferBot:
 
         cursor.close()
         return resultado
+    
+    def filtro_envios_antigos(self, tabela):
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        cursor = conn.cursor()
+
+        cursor.execute(f"SELECT * FROM {tabela}")
+        resultado = cursor.fetchall()
+
+        cursor.close()
+        return resultado
 
     def verificar_itens_novos(self):
         pass
