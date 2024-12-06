@@ -13,7 +13,6 @@ from tabulate import tabulate
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# sys.path.insert(0, 'path/to/your/py_file')
 from BotTelegram.NotifyOfferBot import *
 
 class Transformacao(NotifyOfferBot):
