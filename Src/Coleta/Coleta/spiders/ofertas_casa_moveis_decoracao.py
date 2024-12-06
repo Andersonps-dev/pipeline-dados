@@ -6,7 +6,7 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
     start_urls = ["https://www.mercadolivre.com.br/ofertas?category=MLB1574"]
     
     page_count = 1
-    max_pages = 10
+    max_pages = 15
     
     def parse(self, response):
         produtos = response.css("div.poly-card__content")

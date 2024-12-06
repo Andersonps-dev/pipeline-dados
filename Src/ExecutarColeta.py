@@ -33,14 +33,14 @@ class ExecutorDeScripts(Transformacao):
                 titulo TEXT,
                 link TEXT,
                 vendido_por TEXT,
-                nota REAL,
+                nota TEXT,
                 total_avaliacoes INTEGER,
-                preco_anterior REAL,
-                preco_atual REAL,
-                porcentagem_desconto REAL,
+                preco_anterior FLOAT,
+                preco_atual FLOAT,
+                porcentagem_desconto INTEGER,
                 detalhe_envio TEXT,
                 detalhe_envio_2 TEXT,
-                data_coleta TEXT,
+                data_coleta DATETIME,
                 desconto_reais REAL
             )
         """)

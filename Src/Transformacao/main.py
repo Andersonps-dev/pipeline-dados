@@ -71,9 +71,9 @@ class Transformacao(NotifyOfferBot):
                 vendido_por TEXT,
                 nota TEXT,
                 total_avaliacoes INTEGER,
-                preco_anterior FLOAT,
-                preco_atual FLOAT,
-                porcentagem_desconto INT,
+                preco_anterior REAL,
+                preco_atual REAL,
+                porcentagem_desconto INTEGER,
                 detalhe_envio TEXT,
                 detalhe_envio_2 TEXT,
                 data_coleta DATETIME
