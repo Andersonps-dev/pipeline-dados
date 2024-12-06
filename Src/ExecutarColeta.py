@@ -44,6 +44,7 @@ class ExecutorDeScripts(Transformacao):
                 desconto_reais REAL
             )
         """)
+        cursor.execute(f"DELETE FROM {tabela_anterior}")
         
         for row in resultado:
             cursor.execute(f"""

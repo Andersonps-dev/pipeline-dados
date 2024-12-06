@@ -52,8 +52,19 @@ class NotifyOfferBot:
         cursor.close()
         return resultado
 
-    def verificar_itens_novos(self):
-        pass
+    def verificar_itens_novos(self, tabela, tabela_antiga):
+        nova_coleta = self.filtro_envios_principais(tabela)
+        antiga_coleta = self.filtro_envios_antigos(tabela_antiga)
+
+        novos_itens = []
+
+        nome_itens = [item[1] for item in antiga_coleta]
+
+        for item in nova_coleta:
+            if item[1] not in nome_itens:
+                novos_itens.append(item)
+
+        return novos_itens
 
     def filtro_envios_reservas(self):
         pass
@@ -94,7 +105,7 @@ if __name__ == "__main__":
         async def main():
             await asyncio.gather(
                 exe.envios_telegram("dados_games", "2"),
-                exe.envios_telegram("dados_casa_moveis_decoracao", "4")
+                exe.envios_telegram("dados_casa_moveis_decoracao", "4"),
             )
         asyncio.run(main())
     except Exception as e:
