@@ -180,7 +180,7 @@ if __name__ == "__main__":
         exe = NotifyOfferBot()
         async def main():
             await asyncio.gather(
-                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao", "4"),
+                # exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao", "4"),
                 exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
                 exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
             )

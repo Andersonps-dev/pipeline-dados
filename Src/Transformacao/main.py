@@ -100,7 +100,6 @@ class Transformacao(NotifyOfferBot):
         
     def executor(self):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
-        self.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
         self.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
         conn.close()
 

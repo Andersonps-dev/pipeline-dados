@@ -73,4 +73,3 @@ class ExecutorDeScripts(Transformacao):
 if __name__ == "__main__":
     executor = ExecutorDeScripts()
     executor.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
-    executor.executar_scrapy("ofertas_games", "dados_games")
