@@ -2,6 +2,7 @@ import subprocess
 import os
 import sys
 
+
 from Transformacao.main import Transformacao
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
