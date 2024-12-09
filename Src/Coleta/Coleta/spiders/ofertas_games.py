@@ -31,7 +31,8 @@ class OfertasGamesSpider(scrapy.Spider):
                 'fracao_preco_atual': produto.css('span.andes-money-amount__cents.andes-money-amount__cents--superscript-24::text').get(),
                 'porcentagem_desconto': produto.css('span.andes-money-amount__discount::text').get(),
                 'detalhe_envio': produto.css('div.poly-component__shipping::text').get(),
-                'detalhe_envio_2': produto.css('div.poly-component__shipping span::text').get()
+                'detalhe_envio_2': produto.css('div.poly-component__shipping span::text').get(),
+                'imagem': produto.css('div.poly-card__portada img::attr(src)').get()
                    }
         if self.page_count < self.max_pages:
             next_page = response.css('li.andes-pagination__button.andes-pagination__button--next a::attr(href)').get()

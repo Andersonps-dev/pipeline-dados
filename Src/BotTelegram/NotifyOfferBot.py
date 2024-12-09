@@ -32,11 +32,11 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios_principais(self, tabela):
+    def filtro_envios_principais(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= 40 or desconto_reais >= 600 ORDER BY porcentagem_desconto DESC LIMIT 100")
+        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} OR desconto_reais >= {desconto_reais} ORDER BY porcentagem_desconto DESC LIMIT {limit_sql}")
         resultado = cursor.fetchall()
 
         cursor.close()
@@ -81,12 +81,9 @@ class NotifyOfferBot:
                 novos_precos.append(item)
 
         return novos_precos
-
-    def filtro_envios_reservas(self):
-        pass
-
-    async def envios_telegram_todos_itens(self, tabela, topic_id):
-        for i in self.filtro_envios_principais(tabela):
+    
+    async def envios_telegram_todos_itens(self, tabela, topic_id, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
+        for i in self.filtro_envios_principais(tabela, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
             highlight = i[0] if i[0] != None else "-"
             titulo = i[1]
             link = i[2]
@@ -103,13 +100,9 @@ class NotifyOfferBot:
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
                 f"✅ <b>Desconto incrível de:</b> {porcentagem_desconto}%\n\n"
-                f"📦 <b>Observação de venda:</b>\n"
-                f"➡️ {detalhe_envio}\n"
-                f"➡️ {detalhe_envio_2}\n\n"
                 f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
                 f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
                 f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-                f"⚡ <i>Corra, pois as ofertas podem acabar a qualquer momento!</i> ⚡"
             )
 
             await self.__enviar_telegram_message(mensagem, topic_id)
@@ -133,13 +126,9 @@ class NotifyOfferBot:
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
                 f"✅ <b>Desconto incrível de:</b> {porcentagem_desconto}%\n\n"
-                f"📦 <b>Observação de venda:</b>\n"
-                f"➡️ {detalhe_envio}\n"
-                f"➡️ {detalhe_envio_2}\n\n"
                 f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
                 f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
                 f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-                f"⚡ <i>Corra, pois as ofertas podem acabar a qualquer momento!</i> ⚡"
             )
 
             await self.__enviar_telegram_message(mensagem, topic_id)
@@ -163,13 +152,9 @@ class NotifyOfferBot:
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
                 f"✅ <b>Desconto incrível de:</b> {porcentagem_desconto}%\n\n"
-                f"📦 <b>Observação de venda:</b>\n"
-                f"➡️ {detalhe_envio}\n"
-                f"➡️ {detalhe_envio_2}\n\n"
                 f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
                 f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
                 f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-                f"⚡ <i>Corra, pois as ofertas podem acabar a qualquer momento!</i> ⚡"
             )
             
             await self.__enviar_telegram_message(mensagem, topic_id)
@@ -180,7 +165,7 @@ if __name__ == "__main__":
         exe = NotifyOfferBot()
         async def main():
             await asyncio.gather(
-                # exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao", "4"),
+                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao", "4"),
                 exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
                 exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
             )
