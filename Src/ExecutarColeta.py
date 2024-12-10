@@ -61,7 +61,7 @@ class ExecutorDeScripts(Transformacao):
         conn.close()
     
     def executar_scrapy(self, coleta, nome_arquivo):
-        # self.salvar_dados_antigos(nome_arquivo, f"{nome_arquivo}_tabela_anterior")
+        self.salvar_dados_antigos(nome_arquivo, f"{nome_arquivo}_tabela_anterior")
         try:
             scrapy_dir = os.path.join(self.diretorio_principal, "Src", "Coleta", "Coleta", "spiders")
             os.chdir(scrapy_dir)
