@@ -1,7 +1,6 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
 
-
 class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
     name = "ofertas_casa_moveis_decoracao"
     start_urls = ["https://www.mercadolivre.com.br/ofertas?category=MLB1574"]
@@ -42,7 +41,3 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
                 self.page_count += 1
                 yield scrapy.Request(url=next_page, callback=self.parse)
                 
-if __name__ == "__main__":
-    process = CrawlerProcess()
-    process.crawl(OfertasCasaMoveisDecoracaoSpider)
-    process.start()
