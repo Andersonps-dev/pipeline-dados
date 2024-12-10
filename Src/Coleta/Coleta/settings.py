@@ -11,6 +11,8 @@ BOT_NAME = "Coleta"
 
 SPIDER_MODULES = ["Coleta.spiders"]
 NEWSPIDER_MODULE = "Coleta.spiders"
+# ITEM_PIPELINES = {'scrapy.contrib.pipeline.images.ImagesPipeline': 1}
+# IMAGES_STORE = r'..\pipeline-dados\Imagens'
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
 
