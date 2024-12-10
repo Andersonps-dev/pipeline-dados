@@ -1,4 +1,5 @@
 import scrapy
+from scrapy.crawler import CrawlerProcess
 
 
 class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
@@ -6,7 +7,7 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
     start_urls = ["https://www.mercadolivre.com.br/ofertas?category=MLB1574"]
     
     page_count = 1
-    max_pages = 20
+    max_pages = 10
     
     def parse(self, response):
         produtos = response.css("div.poly-card")
@@ -40,3 +41,8 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
             if next_page:
                 self.page_count += 1
                 yield scrapy.Request(url=next_page, callback=self.parse)
+                
+if __name__ == "__main__":
+    process = CrawlerProcess()
+    process.crawl(OfertasCasaMoveisDecoracaoSpider)
+    process.start()
