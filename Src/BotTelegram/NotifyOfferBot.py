@@ -32,7 +32,7 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios_principais(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
+    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -41,21 +41,11 @@ class NotifyOfferBot:
 
         return resultado
     
-    def filtro_envios_antigos(self, tabela):
+    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT * FROM {tabela}")
-        resultado = cursor.fetchall()
-
-        cursor.close()
-        return resultado
-    
-    def salvar_dados_antigos(self, tabela_atual, tabela_anterior):
-        conn = self.criar_conexao_sqlite3("dados_coletados.db")
-        cursor = conn.cursor()
-
-        resultado = self.filtro_envios_principais(tabela_atual)
+        resultado = self.filtro_envios(tabela_atual, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql)
         
         cursor.execute(f"""
             CREATE TABLE IF NOT EXISTS {tabela_anterior} (
@@ -90,8 +80,18 @@ class NotifyOfferBot:
         cursor.close()
         conn.close()
         
+    def filtro_envios_antigos(self, tabela):
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        cursor = conn.cursor()
+
+        cursor.execute(f"SELECT * FROM {tabela}")
+        resultado = cursor.fetchall()
+
+        cursor.close()
+        return resultado
+            
     def verificar_itens_novos(self, tabela, tabela_antiga):
-        nova_coleta = self.filtro_envios_principais(tabela)
+        nova_coleta = self.filtro_envios(tabela)
         antiga_coleta = self.filtro_envios_antigos(tabela_antiga)
 
         novos_itens = []
@@ -105,7 +105,7 @@ class NotifyOfferBot:
         return novos_itens
     
     def verificar_reducao_preco(self, tabela, tabela_antiga):
-        nova_coleta = self.filtro_envios_principais(tabela)
+        nova_coleta = self.filtro_envios(tabela)
         antiga_coleta = self.filtro_envios_antigos(tabela_antiga)
 
         novos_precos = []
@@ -121,7 +121,7 @@ class NotifyOfferBot:
         return novos_precos
     
     async def envios_telegram_todos_itens(self, tabela, topic_id, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
-        for i in self.filtro_envios_principais(tabela, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
+        for i in self.filtro_envios(tabela, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
             highlight = i[0] if i[0] != None else "-"
             titulo = i[1]
             link = i[2]
