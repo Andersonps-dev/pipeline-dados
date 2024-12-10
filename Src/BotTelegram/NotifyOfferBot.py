@@ -39,7 +39,6 @@ class NotifyOfferBot:
         cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} OR desconto_reais >= {desconto_reais} ORDER BY porcentagem_desconto DESC LIMIT {limit_sql}")
         resultado = cursor.fetchall()
 
-        cursor.close()
         return resultado
     
     def filtro_envios_antigos(self, tabela):
@@ -51,7 +50,46 @@ class NotifyOfferBot:
 
         cursor.close()
         return resultado
+    
+    def salvar_dados_antigos(self, tabela_atual, tabela_anterior):
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        cursor = conn.cursor()
 
+        resultado = self.filtro_envios_principais(tabela_atual)
+        
+        cursor.execute(f"""
+            CREATE TABLE IF NOT EXISTS {tabela_anterior} (
+                highlight TEXT,
+                titulo TEXT,
+                link TEXT,
+                vendido_por TEXT,
+                nota TEXT,
+                total_avaliacoes INTEGER,
+                preco_anterior FLOAT,
+                preco_atual FLOAT,
+                porcentagem_desconto INTEGER,
+                detalhe_envio TEXT,
+                detalhe_envio_2 TEXT,
+                data_coleta DATETIME,
+                imagem TEXT,
+                desconto_reais REAL
+            )
+        """)
+        cursor.execute(f"DELETE FROM {tabela_anterior}")
+        
+        for row in resultado:
+            cursor.execute(f"""
+                INSERT INTO {tabela_anterior} (
+                    highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
+                    preco_anterior, preco_atual, porcentagem_desconto, detalhe_envio, 
+                    detalhe_envio_2, imagem, data_coleta, desconto_reais
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, row)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
     def verificar_itens_novos(self, tabela, tabela_antiga):
         nova_coleta = self.filtro_envios_principais(tabela)
         antiga_coleta = self.filtro_envios_antigos(tabela_antiga)
