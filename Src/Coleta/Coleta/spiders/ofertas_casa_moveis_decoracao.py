@@ -9,7 +9,7 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
     max_pages = 20
     
     def parse(self, response):
-        produtos = response.css("div.poly-card__content")
+        produtos = response.css("div.poly-card")
 
         for produto in produtos:
 
@@ -32,7 +32,7 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
                 'porcentagem_desconto': produto.css('span.andes-money-amount__discount::text').get(),
                 'detalhe_envio': produto.css('div.poly-component__shipping::text').get(),
                 'detalhe_envio_2': produto.css('div.poly-component__shipping span::text').get(),
-                'imagem': produto.xpath('//*[@id=":Ra1j7:"]/div[1]/img/@data-src').get()
+                'imagem': produto.css('div.poly-card__portada img::attr(data-src)').get()
                     }
             
         if self.page_count < self.max_pages:
