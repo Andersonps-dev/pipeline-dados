@@ -1,7 +1,7 @@
 import subprocess
 import os
 import sys
-
+from scrapy.crawler import CrawlerProcess
 
 from Transformacao.main import Transformacao
 
@@ -42,6 +42,7 @@ class ExecutorDeScripts(Transformacao):
                 detalhe_envio TEXT,
                 detalhe_envio_2 TEXT,
                 data_coleta DATETIME,
+                link_imagem TEXT,
                 desconto_reais REAL
             )
         """)

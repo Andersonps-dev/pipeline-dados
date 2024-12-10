@@ -75,7 +75,8 @@ class Transformacao(NotifyOfferBot):
                 porcentagem_desconto INTEGER,
                 detalhe_envio TEXT,
                 detalhe_envio_2 TEXT,
-                data_coleta DATETIME
+                data_coleta DATETIME,
+                link_imagem TEXT
             )
         ''')
         conn.commit()
