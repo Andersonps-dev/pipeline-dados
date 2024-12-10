@@ -122,22 +122,23 @@ class NotifyOfferBot:
     
     async def envios_telegram_todos_itens(self, tabela, topic_id, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
         for i in self.filtro_envios(tabela, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
-            highlight = i[0] if i[0] != None else "-"
+            highlight = i[0] if i[0] != None else ""
             titulo = i[1]
             link = i[2]
             vendido_por = i[3] if i[3] != None else "-"
             preco_antigo = i[6]
             preco_novo = i[7]
             porcentagem_desconto = i[8]
+            imagem = i[11]
             detalhe_envio = i[9] if i[9] != None else "-"
             detalhe_envio_2 = i[10] if i[10] != None else "-"
 
             mensagem = (
-                f"<b>🌟 {titulo} 🌟</b>\n\n"
-                f"<i>✨ Oferta imperdível para você! {highlight} ✨</i>\n\n"
+                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
+                f"<i>✨Oferta imperdível para você! {highlight}✨</i>\n\n"
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
-                f"✅ <b>Desconto incrível de:</b> {porcentagem_desconto}%\n\n"
+                f"✅ <b>Desconto incrível de:</b> {porcentagem_desconto}%\n"
                 f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
                 f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
                 f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
@@ -155,11 +156,12 @@ class NotifyOfferBot:
             preco_antigo = i[6]
             preco_novo = i[7]
             porcentagem_desconto = i[8]
+            imagem = i[11]
             detalhe_envio = i[9] if i[9] != None else "-"
             detalhe_envio_2 = i[10] if i[10] != None else "-"
 
             mensagem = (
-                f"<b>🌟 {titulo} 🌟</b>\n\n"
+                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
                 f"<i> ✨ <b>NOVA</b> oferta imperdível para você! {highlight} ✨</i>\n\n"
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
@@ -181,11 +183,12 @@ class NotifyOfferBot:
             preco_antigo = i[6]
             preco_novo = i[7]
             porcentagem_desconto = i[8]
+            imagem = i[11]
             detalhe_envio = i[9] if i[9] != None else "-"
             detalhe_envio_2 = i[10] if i[10] != None else "-"
 
             mensagem = (
-                f"<b>🌟 {titulo} 🌟</b>\n\n"
+                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
                 f"<i> ✨ <b>REDUÇÃO DE PREÇO</b> oferta imperdível para você! {highlight} ✨</i>\n\n"
                 f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
                 f"🔖 <b>Preço antigo:</b> R$ {preco_antigo}\n"
@@ -204,8 +207,8 @@ if __name__ == "__main__":
         async def main():
             await asyncio.gather(
                 exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao", "4"),
-                exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-                exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+                # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+                # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
             )
         asyncio.run(main())
     except Exception as e:
