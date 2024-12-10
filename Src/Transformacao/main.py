@@ -56,30 +56,7 @@ class Transformacao(NotifyOfferBot):
         df = df.drop_duplicates(subset=['titulo'], keep='last')
         df['data_coleta']  = datetime.now()
 
-        self.criar_tabela(conn, nome_tabela_bd)
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='replace', index=False)
-
-    def criar_tabela(self, conn, nome_tabela):
-        cursor = conn.cursor()
-        cursor.execute(f'''
-            CREATE TABLE IF NOT EXISTS {nome_tabela} (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                highlight TEXT,
-                titulo TEXT,
-                link TEXT,
-                vendido_por TEXT,
-                nota TEXT,
-                total_avaliacoes INTEGER,
-                preco_anterior REAL,
-                preco_atual REAL,
-                porcentagem_desconto INTEGER,
-                detalhe_envio TEXT,
-                detalhe_envio_2 TEXT,
-                data_coleta DATETIME,
-                link_imagem TEXT
-            )
-        ''')
-        conn.commit()
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
@@ -102,6 +79,7 @@ class Transformacao(NotifyOfferBot):
     def executor(self):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         self.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
+        self.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
         conn.close()
 
 if __name__ == "__main__":

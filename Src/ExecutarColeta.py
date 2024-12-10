@@ -42,7 +42,7 @@ class ExecutorDeScripts(Transformacao):
                 detalhe_envio TEXT,
                 detalhe_envio_2 TEXT,
                 data_coleta DATETIME,
-                link_imagem TEXT,
+                imagem TEXT,
                 desconto_reais REAL
             )
         """)
@@ -53,8 +53,8 @@ class ExecutorDeScripts(Transformacao):
                 INSERT INTO {tabela_anterior} (
                     highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
                     preco_anterior, preco_atual, porcentagem_desconto, detalhe_envio, 
-                    detalhe_envio_2, data_coleta, desconto_reais
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    detalhe_envio_2, imagem, data_coleta, desconto_reais
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, row)
 
         conn.commit()
@@ -75,3 +75,4 @@ class ExecutorDeScripts(Transformacao):
 if __name__ == "__main__":
     executor = ExecutorDeScripts()
     executor.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
+    executor.executar_scrapy("ofertas_games", "dados_games")
