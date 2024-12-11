@@ -18,11 +18,6 @@ class NotifyOfferBot:
     def __init__(self):
         load_dotenv()
         self.__estancia_bot()
-        
-        self.grupos = {
-            "ofertas_casa_moveis_decoracao": "4",
-            "ofertas_games": "2"
-        }
 
     def __estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -69,6 +64,7 @@ class NotifyOfferBot:
                 detalhe_envio_2 TEXT,
                 data_coleta DATETIME,
                 imagem TEXT,
+                topico_de_envio TEXT,
                 desconto_reais REAL
             )
         """)
@@ -79,8 +75,8 @@ class NotifyOfferBot:
                 INSERT INTO {tabela_anterior} (
                     Id,highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
                     preco_anterior, preco_atual, porcentagem_desconto, detalhe_envio, 
-                    detalhe_envio_2, imagem, data_coleta, desconto_reais
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    detalhe_envio_2, imagem, data_coleta, topico_de_envio, desconto_reais
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, row)
 
         conn.commit()

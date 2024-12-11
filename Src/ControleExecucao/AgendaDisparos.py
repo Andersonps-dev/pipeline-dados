@@ -23,14 +23,19 @@ class ScheduleJob(ExecutarColeta):
     def __init__(self):
         super().__init__()
         self.conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        
+        self.grupos = {
+            "ofertas_casa_moveis_decoracao": "4",
+            "ofertas_games": "2"
+        }
     
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
         self.executar_scrapy("ofertas_games", "dados_games")
         
     def tratar_dados(self):
-        self.tratar_base(conn=self.conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
-        self.tratar_base(conn=self.conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
+        self.tratar_base(conn=self.conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao", topic_id=self.grupos["ofertas_casa_moveis_decoracao"])
+        self.tratar_base(conn=self.conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id=self.grupos["ofertas_games"])
         self.conn.close()
         
     def fila_bases(self):

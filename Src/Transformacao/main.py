@@ -26,7 +26,7 @@ class Transformacao(NotifyOfferBot):
 
         self.pasta_dados = r'..\pipeline-dados\Dados'
     
-    def tratar_base(self, conn=None, nome_arquivo=None, nome_tabela_bd=None, nome_bd='dados_coletados.db'):
+    def tratar_base(self, conn=None, nome_arquivo=None, nome_tabela_bd=None, nome_bd='dados_coletados.db', topic_id=None):
         caminho = os.path.join(self.pasta_dados, nome_arquivo)
         
         df = pd.read_json(caminho, lines=True, dtype={"preco_anterior": str, "fracao_preco_anterior":str, "preco_atual":str, "fracao_preco_atual":str})
@@ -55,6 +55,7 @@ class Transformacao(NotifyOfferBot):
         df = df.sort_values('porcentagem_desconto', ascending=True)
         df = df.drop_duplicates(subset=['titulo'], keep='last')
         df['data_coleta']  = datetime.now()
+        df['topico_de_envio'] = f"{topic_id}"
 
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='replace', index=False)
 
@@ -78,8 +79,8 @@ class Transformacao(NotifyOfferBot):
         
     def execucao_tratamentos(self):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
-        self.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao")
-        self.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games")
+        self.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao", topic_id="4")
+        self.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id="2")
         conn.close()
 
 if __name__ == "__main__":
