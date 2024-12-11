@@ -3,12 +3,12 @@ import os
 import sys
 from scrapy.crawler import CrawlerProcess
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from Transformacao.main import Transformacao
 from BotTelegram.NotifyOfferBot import NotifyOfferBot
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-class ExecutorDeScripts(Transformacao, NotifyOfferBot):
+class ExecutarColeta(Transformacao, NotifyOfferBot):
     def __init__(self):
         super().__init__()
         
@@ -25,8 +25,3 @@ class ExecutorDeScripts(Transformacao, NotifyOfferBot):
             subprocess.run(comando, shell=True, check=True)
         finally:
             os.chdir(self.diretorio_principal)
-
-if __name__ == "__main__":
-    executor = ExecutorDeScripts()
-    executor.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
-    executor.executar_scrapy("ofertas_games", "dados_games")
