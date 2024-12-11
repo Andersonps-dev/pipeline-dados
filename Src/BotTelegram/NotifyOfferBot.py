@@ -18,6 +18,11 @@ class NotifyOfferBot:
     def __init__(self):
         load_dotenv()
         self.__estancia_bot()
+        
+        self.grupos = {
+            "ofertas_casa_moveis_decoracao": "4",
+            "ofertas_games": "2"
+        }
 
     def __estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
