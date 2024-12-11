@@ -50,6 +50,7 @@ class NotifyOfferBot:
         
         cursor.execute(f"""
             CREATE TABLE IF NOT EXISTS {tabela_anterior} (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 highlight TEXT,
                 titulo TEXT,
                 link TEXT,
@@ -71,10 +72,10 @@ class NotifyOfferBot:
         for row in resultado:
             cursor.execute(f"""
                 INSERT INTO {tabela_anterior} (
-                    highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
+                    Id,highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
                     preco_anterior, preco_atual, porcentagem_desconto, detalhe_envio, 
                     detalhe_envio_2, imagem, data_coleta, desconto_reais
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, row)
 
         conn.commit()
