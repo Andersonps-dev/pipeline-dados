@@ -126,16 +126,16 @@ class NotifyOfferBot:
     
     async def envios_telegram_todos_itens(self, tabela, topic_id, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
         for i in self.filtro_envios(tabela, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
-            highlight = i[0] if i[0] != None else ""
-            titulo = i[1]
-            link = i[2]
-            vendido_por = i[3] if i[3] != None else "-"
-            preco_antigo = i[6]
-            preco_novo = i[7]
-            porcentagem_desconto = i[8]
-            imagem = i[11]
-            detalhe_envio = i[9] if i[9] != None else "-"
-            detalhe_envio_2 = i[10] if i[10] != None else "-"
+            highlight = i[1] if i[1] != None else ""
+            titulo = i[2]
+            link = i[3]
+            vendido_por = i[4] if i[4] != None else "-"
+            preco_antigo = i[7]
+            preco_novo = i[8]
+            porcentagem_desconto = i[9]
+            imagem = i[12]
+            detalhe_envio = i[10] if i[10] != None else "-"
+            detalhe_envio_2 = i[11] if i[11] != None else "-"
 
             mensagem = (
                 f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
@@ -152,16 +152,16 @@ class NotifyOfferBot:
     
     async def envios_telegram_novas_ofertas(self, tabela, tabela_antiga, topic_id):
         for i in self.verificar_itens_novos(tabela, tabela_antiga):
-            highlight = i[0] if i[0] != None else "-"
-            titulo = i[1]
-            link = i[2]
-            vendido_por = i[3] if i[3] != None else "-"
-            preco_antigo = i[6]
-            preco_novo = i[7]
-            porcentagem_desconto = i[8]
-            imagem = i[11]
-            detalhe_envio = i[9] if i[9] != None else "-"
-            detalhe_envio_2 = i[10] if i[10] != None else "-"
+            highlight = i[1] if i[1] != None else ""
+            titulo = i[2]
+            link = i[3]
+            vendido_por = i[4] if i[4] != None else "-"
+            preco_antigo = i[7]
+            preco_novo = i[8]
+            porcentagem_desconto = i[9]
+            imagem = i[12]
+            detalhe_envio = i[10] if i[10] != None else "-"
+            detalhe_envio_2 = i[11] if i[11] != None else "-"
 
             mensagem = (
                 f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
@@ -178,16 +178,16 @@ class NotifyOfferBot:
             
     async def envios_telegram_reducao_preco(self, tabela, tabela_antiga, topic_id):
         for i in self.verificar_reducao_preco(tabela, tabela_antiga):
-            highlight = i[0] if i[0] != None else "-"
-            titulo = i[1]
-            link = i[2]
-            vendido_por = i[3] if i[3] != None else "-"
-            preco_antigo = i[6]
-            preco_novo = i[7]
-            porcentagem_desconto = i[8]
-            imagem = i[11]
-            detalhe_envio = i[9] if i[9] != None else "-"
-            detalhe_envio_2 = i[10] if i[10] != None else "-"
+            highlight = i[1] if i[1] != None else ""
+            titulo = i[2]
+            link = i[3]
+            vendido_por = i[4] if i[4] != None else "-"
+            preco_antigo = i[7]
+            preco_novo = i[8]
+            porcentagem_desconto = i[9]
+            imagem = i[12]
+            detalhe_envio = i[10] if i[10] != None else "-"
+            detalhe_envio_2 = i[11] if i[11] != None else "-"
 
             mensagem = (
                 f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
