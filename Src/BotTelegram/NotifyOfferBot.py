@@ -38,6 +38,7 @@ class NotifyOfferBot:
 
         cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} OR desconto_reais >= {desconto_reais} ORDER BY porcentagem_desconto DESC LIMIT {limit_sql}")
         resultado = cursor.fetchall()
+        resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado
     
@@ -86,8 +87,12 @@ class NotifyOfferBot:
 
         cursor.execute(f"SELECT * FROM {tabela}")
         resultado = cursor.fetchall()
+        
+        resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         cursor.close()
+        conn.close()
+        
         return resultado
             
     def verificar_itens_novos(self, tabela, tabela_antiga):
