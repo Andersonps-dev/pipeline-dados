@@ -20,7 +20,7 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
 
             yield {
                 'highlight': produto.css('span.poly-component__highlight::text').get(),
-                'titulo': produto.css('a.poly-component__title::text').get(), #RESERVA: 'titulo': produto.css('h2.poly-box.poly-component__title a::text').get()
+                'titulo': produto.css('a.poly-component__title::text').get(),
                 'link': produto.css('a.poly-component__title::attr(href)').get(),
                 'vendido_por': produto.css('span.poly-component__seller::text').get(),
                 'nota': produto.css('span.poly-reviews__rating::text').get(),
