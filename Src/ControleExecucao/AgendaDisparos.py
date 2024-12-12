@@ -41,10 +41,13 @@ class ScheduleJob(ExecutarColeta):
     def fila_bases(self):
         bases = [self.filtro_envios("dados_casa_moveis_decoracao"), self.filtro_envios("dados_games")]
         fila = []
+        
         for i in bases:
-            fila.append(i)
-            
-        return fila
+            fila.extend(i) 
+
+        fila_ordenada = sorted(fila, key=lambda x: x[0])
+
+        return print(fila_ordenada)
     
     def enviar_mensagens_iniciais(self):
         async def main():
@@ -62,4 +65,4 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.disparo_inicial()
+    exe.fila_bases()
