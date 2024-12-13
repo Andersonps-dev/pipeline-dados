@@ -50,7 +50,7 @@ class ScheduleJob(ExecutarColeta):
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return print(fila_ordenada)
+        return fila_ordenada
     
     def fila_itens_novos(self):
         bases_envios_iniciais = [self.verificar_itens_novos(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
@@ -61,21 +61,21 @@ class ScheduleJob(ExecutarColeta):
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return print(fila_ordenada)
+        return fila_ordenada
 
     def envios_iniciais(self):
         async def main():
             fila = self.fila_bases_iniciais()
             await asyncio.gather(
-                self.envios_telegram_todos_itens(fila)
+                self.enviar_menssagem_telegram(fila)
             )
         asyncio.run(main())
     
     def envios_periodicos(self):
         async def main():
-            fila = self.fila_bases_iniciais()
+            fila = self.fila_itens_novos()
             await asyncio.gather(
-                self.envios_telegram_todos_itens(fila)
+                self.enviar_menssagem_telegram(fila)
             )
         asyncio.run(main())
         

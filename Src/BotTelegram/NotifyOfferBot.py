@@ -127,8 +127,8 @@ class NotifyOfferBot:
 
         return novos_precos
     
-    async def envios_telegram_todos_itens(self, tabela):
-        for i in tabela:
+    async def enviar_menssagem_telegram(self, fila):
+        for i in fila:
             topic_id = i[14]
             highlight = i[1] if i[1] != None else ""
             titulo = i[2]
@@ -151,59 +151,6 @@ class NotifyOfferBot:
                 f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
             )
 
-            await self.__enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(self.tempo_espera_entre_envios)
-    
-    async def envios_telegram_novas_ofertas(self, tabela, tabela_antiga):
-        for i in self.verificar_itens_novos(tabela, tabela_antiga):
-            topic_id = i[14]
-            highlight = i[1] if i[1] != None else ""
-            titulo = i[2]
-            link = i[3]
-            vendido_por = i[4] if i[4] != None else "-"
-            preco_antigo = i[7]
-            preco_novo = i[8]
-            porcentagem_desconto = i[9]
-            imagem = i[12]
-            detalhe_envio = i[10] if i[10] != None else "-"
-            detalhe_envio_2 = i[11] if i[11] != None else "-"
-
-            mensagem = (
-                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
-                f"<i> ✨ <b>NOVA</b> oferta imperdível para você! {highlight} ✨</i>\n\n"
-                f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
-                f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
-                f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
-                f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
-                f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-            )
-
-            await self.__enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(self.tempo_espera_entre_envios)
-            
-    async def envios_telegram_reducao_preco(self, tabela, tabela_antiga, topic_id):
-        for i in self.verificar_reducao_preco(tabela, tabela_antiga):
-            highlight = i[1] if i[1] != None else ""
-            titulo = i[2]
-            link = i[3]
-            vendido_por = i[4] if i[4] != None else "-"
-            preco_antigo = i[7]
-            preco_novo = i[8]
-            porcentagem_desconto = i[9]
-            imagem = i[12]
-            detalhe_envio = i[10] if i[10] != None else "-"
-            detalhe_envio_2 = i[11] if i[11] != None else "-"
-
-            mensagem = (
-                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
-                f"<i> ✨ <b>REDUÇÃO DE PREÇO</b> oferta imperdível para você! {highlight} ✨</i>\n\n"
-                f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
-                f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
-                f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
-                f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
-                f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-            )
-            
             await self.__enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(self.tempo_espera_entre_envios)
 
