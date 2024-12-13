@@ -51,8 +51,10 @@ class ScheduleJob(ExecutarColeta):
     
     def enviar_mensagens_iniciais(self):
         async def main():
+            fila = self.fila_bases()
             await asyncio.gather(
-                self.envios_telegram_todos_itens("dados_casa_moveis_decoracao", "4")
+                self.envios_telegram_todos_itens(fila, self.grupos["ofertas_casa_moveis_decoracao"]),
+                self.envios_telegram_todos_itens(fila, self.grupos["ofertas_games"])
             )
         asyncio.run(main())
         
@@ -65,4 +67,6 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.fila_bases()
+    # exe.coletar_dados()
+    # exe.tratar_dados()
+    exe.enviar_mensagens_iniciais()
