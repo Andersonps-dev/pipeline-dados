@@ -109,7 +109,7 @@ class NotifyOfferBot:
             if item[1] not in nome_itens:
                 novos_itens.append(item)
 
-        return novos_itens
+        return print(novos_itens)
     
     def verificar_reducao_preco(self, tabela, tabela_antiga):
         nova_coleta = self.filtro_envios(tabela)
@@ -157,12 +157,13 @@ class NotifyOfferBot:
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        async def main():
-            await asyncio.gather(
-                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-                # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-                # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-            )
-        asyncio.run(main())
+        exe.verificar_itens_novos("dados_games","dados_games_tabela_anterior")
+        # async def main():
+        #     await asyncio.gather(
+        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+        #         # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+        #         # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+        #     )
+        # asyncio.run(main())
     except Exception as e:
         print(f"Erro na execução: {e}")
