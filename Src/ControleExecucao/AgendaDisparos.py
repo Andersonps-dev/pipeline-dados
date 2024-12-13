@@ -30,6 +30,7 @@ class ScheduleJob(ExecutarColeta):
         }
 
         self.estancia_bot()
+        
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
         self.executar_scrapy("ofertas_games", "dados_games")
@@ -50,17 +51,22 @@ class ScheduleJob(ExecutarColeta):
 
         return fila_ordenada
     
-    def enviar_mensagens_iniciais(self):
+    def envios_iniciais(self):
         async def main():
             fila = self.fila_bases()
             await asyncio.gather(
                 self.envios_telegram_todos_itens(fila)
             )
         asyncio.run(main())
+    
+    def envios_periodicos(self):
+        pass
         
     def disparo_inicial(self):
-        schedule.every().day.at("06:00").do(self.coletar_dados)
-        schedule.every().day.at("06:00").do(self.tratar_dados)
+        horario = "06:00"
+        schedule.every().day.at(horario).do(self.coletar_dados)
+        schedule.every().day.at(horario).do(self.tratar_dados)
+        schedule.every().day.at(horario).do(self.envios_iniciais)
 
     def disparo_periodico(self):
         pass
