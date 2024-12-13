@@ -47,7 +47,7 @@ class ScheduleJob(ExecutarColeta):
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return print(fila_ordenada)
+        return fila_ordenada
     
     def enviar_mensagens_iniciais(self):
         async def main():
