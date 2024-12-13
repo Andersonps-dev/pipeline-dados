@@ -18,6 +18,8 @@ class NotifyOfferBot:
     def __init__(self):
         load_dotenv()
         self.estancia_bot()
+        
+        self.tempo_espera_entre_envios = 5
 
     def estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -150,7 +152,7 @@ class NotifyOfferBot:
             )
 
             await self.__enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(5)
+            await asyncio.sleep(self.tempo_espera_entre_envios)
     
     async def envios_telegram_novas_ofertas(self, tabela, tabela_antiga, topic_id):
         for i in self.verificar_itens_novos(tabela, tabela_antiga):
@@ -176,7 +178,7 @@ class NotifyOfferBot:
             )
 
             await self.__enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(5)
+            await asyncio.sleep(self.tempo_espera_entre_envios)
             
     async def envios_telegram_reducao_preco(self, tabela, tabela_antiga, topic_id):
         for i in self.verificar_reducao_preco(tabela, tabela_antiga):
@@ -202,7 +204,7 @@ class NotifyOfferBot:
             )
             
             await self.__enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(5)
+            await asyncio.sleep(self.tempo_espera_entre_envios)
 
 if __name__ == "__main__":
     try:
