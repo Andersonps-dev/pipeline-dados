@@ -125,8 +125,9 @@ class NotifyOfferBot:
 
         return novos_precos
     
-    async def envios_telegram_todos_itens(self, tabela, topic_id):
+    async def envios_telegram_todos_itens(self, tabela):
         for i in tabela:
+            topic_id = i[14]
             highlight = i[1] if i[1] != None else ""
             titulo = i[2]
             link = i[3]
