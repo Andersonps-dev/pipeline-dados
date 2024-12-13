@@ -98,24 +98,46 @@ class ScheduleJob(ExecutarColeta):
             )
         asyncio.run(main())
    
-    def disparo_inicial(self):
-        primeiro_horario = "06:00"
-        schedule.every().day.at(primeiro_horario).do(self.coletar_dados)
-        schedule.every().day.at(primeiro_horario).do(self.tratar_dados)
-        schedule.every().day.at(primeiro_horario).do(self.envios_iniciais)
-        
     def logica_envios(self):
-        self.disparo_inicial()
         
-        if len(self.fila_itens_novos()) < 20:
-            schedule.every().day.at("10:00").do(self.envios_itens_novos)
-            schedule.every().day.at("10:00").do(self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=40, desconto_reais=200, limit_sql=30))
-        else:
-            schedule.every().day.at("10:00").do(self.envios_itens_novos)       
+        horarios = {
+        "primeiro_horario":"06:00",
+        "segundo_horario":"10:00",
+        "terceiro_horario":"16:00"}
+        
+        def agendar_tarefas(horario, tarefas):
+            for tarefa in tarefas:
+                schedule.every().day.at(horario).do(tarefa)
             
+        def condicional_envios(horario, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
+            if (len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco())) < 20:
+                agendar_tarefas(horario, 
+                                [self.envios_itens_novos, 
+                                 self.envios_itens_reducao_preco,
+                                          lambda: 
+                                              self.envios_iniciais(porcentagem_maior_igual=porcentagem_maior_igual, 
+                                                                       porcentagem_menor=porcentagem_menor,
+                                                                       desconto_reais=desconto_reais, 
+                                                                       limit_sql=limit_sql)])
+            else:
+                agendar_tarefas(horario, [self.envios_itens_novos])
+        
+        while True:
+            tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais]
+            agendar_tarefas(horarios["primeiro_horario"], tarefas_fixas)
+            
+            tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
+            
+            agendar_tarefas(horarios["segundo_horario"], tarefas_fixas_sem_envios)
+            condicional_envios(horarios["segundo_horario"], 35, 40, 200, 30)
+            
+            agendar_tarefas(horarios["terceiro_horario"], tarefas_fixas_sem_envios)
+            condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 20)
+            
+            schedule.run_pending()
+            time.sleep(1)
+
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    # exe.coletar_dados()
-    # exe.tratar_dados()
-    exe.fila_itens_novos()
+    exe.logica_envios()
