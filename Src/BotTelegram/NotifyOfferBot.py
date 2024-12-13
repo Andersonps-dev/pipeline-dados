@@ -154,8 +154,9 @@ class NotifyOfferBot:
             await self.__enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(self.tempo_espera_entre_envios)
     
-    async def envios_telegram_novas_ofertas(self, tabela, tabela_antiga, topic_id):
+    async def envios_telegram_novas_ofertas(self, tabela, tabela_antiga):
         for i in self.verificar_itens_novos(tabela, tabela_antiga):
+            topic_id = i[14]
             highlight = i[1] if i[1] != None else ""
             titulo = i[2]
             link = i[3]
@@ -211,7 +212,7 @@ if __name__ == "__main__":
         exe = NotifyOfferBot()
         async def main():
             await asyncio.gather(
-                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao", "4"),
+                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
                 # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
                 # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
             )

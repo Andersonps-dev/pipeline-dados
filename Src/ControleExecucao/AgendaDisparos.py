@@ -31,7 +31,7 @@ class ScheduleJob(ExecutarColeta):
         }
         
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
-        
+                                                         
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
         self.executar_scrapy("ofertas_games", "dados_games")
@@ -41,31 +41,43 @@ class ScheduleJob(ExecutarColeta):
         self.tratar_base(conn=self.conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id=self.grupos["ofertas_games"])
         self.conn.close()
         
-    def fila_bases(self):
+    def fila_bases_iniciais(self):
         bases_envios_iniciais = [self.filtro_envios(base) for base in self.bases_para_envios_iniciais]
         
         fila = []
-        
         for i in bases_envios_iniciais:
             fila.extend(i) 
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return fila_ordenada
+        return print(fila_ordenada)
     
-    def fila_reducao_preco(self):
-        pass
+    def fila_itens_novos(self):
+        bases_envios_iniciais = [self.verificar_itens_novos(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
+        
+        fila = []
+        for i in bases_envios_iniciais:
+            fila.extend(i) 
+
+        fila_ordenada = sorted(fila, key=lambda x: x[0])
+
+        return print(fila_ordenada)
 
     def envios_iniciais(self):
         async def main():
-            fila = self.fila_bases()
+            fila = self.fila_bases_iniciais()
             await asyncio.gather(
                 self.envios_telegram_todos_itens(fila)
             )
         asyncio.run(main())
     
     def envios_periodicos(self):
-        pass
+        async def main():
+            fila = self.fila_bases_iniciais()
+            await asyncio.gather(
+                self.envios_telegram_todos_itens(fila)
+            )
+        asyncio.run(main())
         
     def disparo_inicial(self):
         horario = "06:00"
@@ -80,4 +92,4 @@ if __name__ == "__main__":
     exe = ScheduleJob()
     # exe.coletar_dados()
     # exe.tratar_dados()
-    # exe.envios_iniciais()
+    exe.fila_itens_novos()
