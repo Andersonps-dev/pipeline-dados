@@ -67,6 +67,6 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    # exe.coletar_dados()
-    # exe.tratar_dados()
+    exe.coletar_dados()
+    exe.tratar_dados()
     exe.enviar_mensagens_iniciais()
