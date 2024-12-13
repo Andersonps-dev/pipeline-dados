@@ -17,9 +17,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 class NotifyOfferBot:
     def __init__(self):
         load_dotenv()
-        self.__estancia_bot()
+        self.estancia_bot()
 
-    def __estancia_bot(self):
+    def estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
@@ -125,8 +125,8 @@ class NotifyOfferBot:
 
         return novos_precos
     
-    async def envios_telegram_todos_itens(self, tabela, topic_id, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
-        for i in self.filtro_envios(tabela, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
+    async def envios_telegram_todos_itens(self, tabela, topic_id):
+        for i in tabela:
             highlight = i[1] if i[1] != None else ""
             titulo = i[2]
             link = i[3]

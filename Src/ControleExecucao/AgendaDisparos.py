@@ -28,7 +28,8 @@ class ScheduleJob(ExecutarColeta):
             "ofertas_casa_moveis_decoracao": "4",
             "ofertas_games": "2"
         }
-    
+
+        self.estancia_bot()
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
         self.executar_scrapy("ofertas_games", "dados_games")
