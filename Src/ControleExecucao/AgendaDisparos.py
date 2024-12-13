@@ -140,4 +140,5 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    len(exe.fila_itens_novos())
+    # exe.fila_itens_novos()
+    # exe.fila_itens_reducao_preco()

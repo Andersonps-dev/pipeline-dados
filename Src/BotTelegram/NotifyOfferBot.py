@@ -95,7 +95,7 @@ class NotifyOfferBot:
         cursor.close()
         conn.close()
         
-        return resultado #print([i[0] for i in resultado])
+        return resultado
             
     def verificar_itens_novos(self, tabela, tabela_antiga):
         nova_coleta = self.filtro_envios(tabela)
