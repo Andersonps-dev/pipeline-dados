@@ -23,13 +23,14 @@ class ScheduleJob(ExecutarColeta):
     def __init__(self):
         super().__init__()
         self.conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        self.estancia_bot()
         
         self.grupos = {
             "ofertas_casa_moveis_decoracao": "4",
             "ofertas_games": "2"
         }
-
-        self.estancia_bot()
+        
+        self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
         
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
@@ -41,16 +42,20 @@ class ScheduleJob(ExecutarColeta):
         self.conn.close()
         
     def fila_bases(self):
-        bases = [self.filtro_envios("dados_casa_moveis_decoracao"), self.filtro_envios("dados_games")]
+        bases_envios_iniciais = [self.filtro_envios(base) for base in self.bases_para_envios_iniciais]
+        
         fila = []
         
-        for i in bases:
+        for i in bases_envios_iniciais:
             fila.extend(i) 
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
         return fila_ordenada
     
+    def fila_reducao_preco(self):
+        pass
+
     def envios_iniciais(self):
         async def main():
             fila = self.fila_bases()
@@ -73,6 +78,6 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.coletar_dados()
-    exe.tratar_dados()
-    exe.enviar_mensagens_iniciais()
+    # exe.coletar_dados()
+    # exe.tratar_dados()
+    # exe.envios_iniciais()
