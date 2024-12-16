@@ -153,16 +153,16 @@ class NotifyOfferBot:
 
             await self.__enviar_telegram_message(mensagem, topic_id)
 
-if __name__ == "__main__":
-    try:
-        exe = NotifyOfferBot()
-        exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior")
-        # async def main():
-        #     await asyncio.gather(
-        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-        #         # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-        #         # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-        #     )
-        # asyncio.run(main())
-    except Exception as e:
-        print(f"Erro na execução: {e}")
+# if __name__ == "__main__":
+#     try:
+#         exe = NotifyOfferBot()
+#         exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior")
+#         # async def main():
+#         #     await asyncio.gather(
+#         #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+#         #         # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+#         #         # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+#         #     )
+#         # asyncio.run(main())
+#     except Exception as e:
+#         print(f"Erro na execução: {e}")

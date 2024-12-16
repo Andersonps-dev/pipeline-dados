@@ -61,17 +61,14 @@ class ScheduleJob(ExecutarColeta):
         
         fila = []
 
-        try:
-            if len(bases_envios_iniciais) == 0:
-                pass
-            else:
-                for i in bases_envios_iniciais:
-                    fila.extend(i)
-                fila_ordenada = sorted(fila, key=lambda x: x[0])
-        except:
-            fila_ordenada = []
+        if len(bases_envios_iniciais) == 0:
+            pass
+        else:
+            for i in bases_envios_iniciais:
+                fila.extend(i)
+            fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return fila_ordenada
+        return print(fila_ordenada)
 
     def fila_itens_reducao_preco(self):
         bases_envios_iniciais = [self.verificar_reducao_preco(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
@@ -116,7 +113,7 @@ class ScheduleJob(ExecutarColeta):
         
         horarios = {
         "primeiro_horario":"19:58",
-        "segundo_horario":"20:28",
+        "segundo_horario":"20:56",
         "terceiro_horario":"16:00"}
         
         def agendar_tarefas(horario, tarefas):
@@ -124,7 +121,10 @@ class ScheduleJob(ExecutarColeta):
                 schedule.every().day.at(horario).do(tarefa)
             
         def condicional_envios(horario, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
-            if (len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco())) < 20:
+            fila_novos = self.fila_itens_novos() or []
+            fila_reducao = self.fila_itens_reducao_preco() or []
+
+            if (len(fila_novos) + len(fila_reducao)) < 20:
                 agendar_tarefas(horario, 
                                 [self.envios_itens_novos, 
                                  self.envios_itens_reducao_preco,
@@ -154,5 +154,5 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    # exe.fila_itens_novos()
-    exe.fila_itens_reducao_preco()
+    exe.logica_envios()
+    # exe.fila_itens_reducao_preco()
