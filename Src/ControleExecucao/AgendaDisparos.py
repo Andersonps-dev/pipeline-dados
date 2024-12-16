@@ -57,7 +57,10 @@ class ScheduleJob(ExecutarColeta):
         
         fila = []
         for i in bases_envios_iniciais:
-            fila.extend(i) 
+            try:
+                fila.extend(i) 
+            except:
+                pass
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
@@ -140,5 +143,5 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    # exe.fila_itens_novos()
+    exe.fila_itens_novos()
     # exe.fila_itens_reducao_preco()
