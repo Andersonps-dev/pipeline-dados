@@ -45,8 +45,12 @@ class ScheduleJob(ExecutarColeta):
         bases_envios_iniciais = [self.filtro_envios(base, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql) for base in self.bases_para_envios_iniciais]
         
         fila = []
-        for i in bases_envios_iniciais:
-            fila.extend(i) 
+
+        if len(bases_envios_iniciais) == 0:
+            pass
+        else:
+            for i in bases_envios_iniciais:
+                fila.extend(i)
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
@@ -56,22 +60,29 @@ class ScheduleJob(ExecutarColeta):
         bases_envios_iniciais = [self.verificar_itens_novos(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
         
         fila = []
-        for i in bases_envios_iniciais:
-            try:
-                fila.extend(i) 
-            except:
-                pass
 
-        fila_ordenada = sorted(fila, key=lambda x: x[0])
+        try:
+            if len(bases_envios_iniciais) == 0:
+                pass
+            else:
+                for i in bases_envios_iniciais:
+                    fila.extend(i)
+                fila_ordenada = sorted(fila, key=lambda x: x[0])
+        except:
+            fila_ordenada = []
 
         return fila_ordenada
 
     def fila_itens_reducao_preco(self):
         bases_envios_iniciais = [self.verificar_reducao_preco(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
-        
+
         fila = []
-        for i in bases_envios_iniciais:
-            fila.extend(i) 
+
+        if len(bases_envios_iniciais) > 0:
+            for i in bases_envios_iniciais:
+                fila.extend(i)
+        else:
+            pass
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
@@ -104,8 +115,8 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"06:00",
-        "segundo_horario":"10:00",
+        "primeiro_horario":"19:58",
+        "segundo_horario":"20:28",
         "terceiro_horario":"16:00"}
         
         def agendar_tarefas(horario, tarefas):
@@ -117,7 +128,7 @@ class ScheduleJob(ExecutarColeta):
                 agendar_tarefas(horario, 
                                 [self.envios_itens_novos, 
                                  self.envios_itens_reducao_preco,
-                                          lambda: 
+                                          lambda:
                                               self.envios_iniciais(porcentagem_maior_igual=porcentagem_maior_igual, 
                                                                        porcentagem_menor=porcentagem_menor,
                                                                        desconto_reais=desconto_reais, 
@@ -143,5 +154,5 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.fila_itens_novos()
-    # exe.fila_itens_reducao_preco()
+    # exe.fila_itens_novos()
+    exe.fila_itens_reducao_preco()
