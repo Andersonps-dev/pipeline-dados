@@ -42,7 +42,7 @@ class NotifyOfferBot:
         resultado = cursor.fetchall()
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
-        return resultado #print([i[0] for i in resultado])
+        return resultado
     
     def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")

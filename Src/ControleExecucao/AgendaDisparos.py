@@ -61,14 +61,15 @@ class ScheduleJob(ExecutarColeta):
         
         fila = []
 
-        if len(bases_envios_iniciais) == 0:
-            pass
-        else:
+        if len(bases_envios_iniciais) > 0:
             for i in bases_envios_iniciais:
-                fila.extend(i)
-            fila_ordenada = sorted(fila, key=lambda x: x[0])
+                fila.extend(i)            
+        else:
+            pass
+            
+        fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return print(fila_ordenada)
+        return fila_ordenada
 
     def fila_itens_reducao_preco(self):
         bases_envios_iniciais = [self.verificar_reducao_preco(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
@@ -112,8 +113,8 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"19:58",
-        "segundo_horario":"21:05",
+        "primeiro_horario":"08:33",
+        "segundo_horario":"08:29",
         "terceiro_horario":"16:00"}
         
         def agendar_tarefas(horario, tarefas):
@@ -121,6 +122,7 @@ class ScheduleJob(ExecutarColeta):
                 schedule.every().day.at(horario).do(tarefa)
             
         def condicional_envios(horario, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
+            
             fila_novos = self.fila_itens_novos() or []
             fila_reducao = self.fila_itens_reducao_preco() or []
 
@@ -155,4 +157,5 @@ class ScheduleJob(ExecutarColeta):
 if __name__ == "__main__":
     exe = ScheduleJob()
     exe.logica_envios()
-    # exe.fila_itens_reducao_preco()
+    # print(exe.fila_itens_reducao_preco())
+    # print(exe.fila_itens_novos())
