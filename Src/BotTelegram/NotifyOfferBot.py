@@ -103,10 +103,10 @@ class NotifyOfferBot:
 
         novos_itens = []
 
-        nome_itens = [item[1] for item in antiga_coleta]
-
+        nome_itens = [item[2] for item in antiga_coleta]
+        
         for item in nova_coleta:
-            if item[1] not in nome_itens:
+            if item[2] not in nome_itens:
                 novos_itens.append(item)
 
         return novos_itens
@@ -114,10 +114,10 @@ class NotifyOfferBot:
     def verificar_reducao_preco(self, tabela, tabela_antiga):
         nova_coleta = self.filtro_envios(tabela)
         antiga_coleta = self.filtro_envios_antigos(tabela_antiga)
-
+        
         novos_precos = []
-
-        antiga_coleta_dict = {item[1]: float(item[7].replace(',', '.')) for item in antiga_coleta}
+        
+        antiga_coleta_dict = {item[2]: float(item[7].replace(',', '.')) for item in antiga_coleta}
         
         for item in nova_coleta:
             nome = item[1]
@@ -154,16 +154,19 @@ class NotifyOfferBot:
             await self.__enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(3)
 
-# if __name__ == "__main__":
-#     try:
-#         exe = NotifyOfferBot()
-#         exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior")
-#         # async def main():
-#         #     await asyncio.gather(
-#         #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-#         #         # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-#         #         # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-#         #     )
-#         # asyncio.run(main())
-#     except Exception as e:
-#         print(f"Erro na execução: {e}")
+if __name__ == "__main__":
+    try:
+        exe = NotifyOfferBot()
+        # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
+        # print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+        # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
+        print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+        # async def main():
+        #     await asyncio.gather(
+        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+        #         # exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+        #         # exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+        #     )
+        # asyncio.run(main())
+    except Exception as e:
+        print(f"Erro na execução: {e}")

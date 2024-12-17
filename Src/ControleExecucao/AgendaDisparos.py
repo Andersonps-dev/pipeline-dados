@@ -113,9 +113,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"06:00",
-        "segundo_horario":"08:48",
-        "terceiro_horario":"16:00"}
+        "primeiro_horario":"12:25",
+        "segundo_horario":"12:30",
+        "terceiro_horario":"12:35"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -126,7 +126,7 @@ class ScheduleJob(ExecutarColeta):
             fila_novos = self.fila_itens_novos() or []
             fila_reducao = self.fila_itens_reducao_preco() or []
 
-            if (len(fila_novos) + len(fila_reducao)) < 20:
+            if (len(fila_novos) + len(fila_reducao)) <= 20:
                 agendar_tarefas(horario, 
                                 [self.envios_itens_novos, 
                                  self.envios_itens_reducao_preco,
@@ -145,10 +145,10 @@ class ScheduleJob(ExecutarColeta):
         tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
                 
         agendar_tarefas(horarios["segundo_horario"], tarefas_fixas_sem_envios)
-        condicional_envios(horarios["segundo_horario"], 35, 40, 200, 30)
+        condicional_envios(horarios["segundo_horario"], 35, 40, 200, 10)
         
         agendar_tarefas(horarios["terceiro_horario"], tarefas_fixas_sem_envios)
-        condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 20)
+        condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 10)
         
         while True:
             schedule.run_pending()
@@ -158,5 +158,3 @@ class ScheduleJob(ExecutarColeta):
 if __name__ == "__main__":
     exe = ScheduleJob()
     exe.logica_envios()
-    # print(exe.fila_itens_reducao_preco())
-    # print(exe.fila_itens_novos())
