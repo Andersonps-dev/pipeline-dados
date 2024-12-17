@@ -152,6 +152,7 @@ class NotifyOfferBot:
             )
 
             await self.__enviar_telegram_message(mensagem, topic_id)
+            await asyncio.sleep(3)
 
 # if __name__ == "__main__":
 #     try:

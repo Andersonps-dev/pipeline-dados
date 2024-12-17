@@ -114,7 +114,7 @@ class ScheduleJob(ExecutarColeta):
         
         horarios = {
         "primeiro_horario":"06:00",
-        "segundo_horario":"08:44",
+        "segundo_horario":"08:48",
         "terceiro_horario":"16:00"}
         
         def agendar_tarefas(horario, tarefas):
