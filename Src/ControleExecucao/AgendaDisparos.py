@@ -113,8 +113,8 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"08:33",
-        "segundo_horario":"08:29",
+        "primeiro_horario":"06:00",
+        "segundo_horario":"08:44",
         "terceiro_horario":"16:00"}
         
         def agendar_tarefas(horario, tarefas):
@@ -136,20 +136,21 @@ class ScheduleJob(ExecutarColeta):
                                                                        desconto_reais=desconto_reais, 
                                                                        limit_sql=limit_sql)])
             else:
-                agendar_tarefas(horario, [self.envios_itens_novos])
+                agendar_tarefas(horario, [self.envios_itens_novos, self.envios_itens_reducao_preco])
+        
+        
+        tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais]
+        agendar_tarefas(horarios["primeiro_horario"], tarefas_fixas)
+        
+        tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
+                
+        agendar_tarefas(horarios["segundo_horario"], tarefas_fixas_sem_envios)
+        condicional_envios(horarios["segundo_horario"], 35, 40, 200, 30)
+        
+        agendar_tarefas(horarios["terceiro_horario"], tarefas_fixas_sem_envios)
+        condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 20)
         
         while True:
-            tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais]
-            agendar_tarefas(horarios["primeiro_horario"], tarefas_fixas)
-            
-            tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
-            
-            agendar_tarefas(horarios["segundo_horario"], tarefas_fixas_sem_envios)
-            condicional_envios(horarios["segundo_horario"], 35, 40, 200, 30)
-            
-            agendar_tarefas(horarios["terceiro_horario"], tarefas_fixas_sem_envios)
-            condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 20)
-            
             schedule.run_pending()
             time.sleep(1)
 
