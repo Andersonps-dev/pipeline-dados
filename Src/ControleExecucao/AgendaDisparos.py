@@ -30,6 +30,11 @@ class ScheduleJob(ExecutarColeta):
             "ofertas_games": "2"
         }
 
+        self.default_info_query = {"porcentagem_maior_igual": 40, 
+                                    "porcentagem_menor": 100,
+                                    "desconto_reais": 600, 
+                                    "limit_sql": 50}  
+
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
                                                          
     def coletar_dados(self):
@@ -113,9 +118,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"09:18",
-        "segundo_horario":"09:35",
-        "terceiro_horario":"09:50"}
+        "primeiro_horario":"10:15",
+        "segundo_horario":"10:41",
+        "terceiro_horario":"11:00"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:

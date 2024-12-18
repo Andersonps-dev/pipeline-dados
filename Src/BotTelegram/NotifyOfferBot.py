@@ -19,12 +19,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 class NotifyOfferBot:
     def __init__(self):
         load_dotenv()
-        self.estancia_bot()
-
-        self.default_info_query = {"porcentagem_maior_igual": 40, 
-                            "porcentagem_menor": 100,
-                            "desconto_reais": 600, 
-                            "limit_sql": 50}        
+        self.estancia_bot()      
 
     def estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -32,7 +27,7 @@ class NotifyOfferBot:
 
         self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=15.0, read_timeout=15.0))
 
-    async def __enviar_telegram_message(self, text, topic_id, retries=3):
+    async def enviar_telegram_message(self, text, topic_id, retries=3):
         for attempt in range(retries):
             try:
                 await self.bot.send_message(
@@ -52,7 +47,7 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
+    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -62,7 +57,7 @@ class NotifyOfferBot:
 
         return resultado
     
-    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
+    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -146,32 +141,34 @@ class NotifyOfferBot:
         return novos_precos
     
     async def enviar_menssagem_telegram(self, fila):
-        for i in fila:
-            topic_id = i[14]
-            highlight = i[1] if i[1] != None else ""
-            titulo = i[2]
-            link = i[3]
-            vendido_por = i[4] if i[4] != None else "-"
-            preco_antigo = i[7]
-            preco_novo = i[8]
-            porcentagem_desconto = i[9]
-            imagem = i[12]
-            detalhe_envio = i[10] if i[10] != None else "-"
-            detalhe_envio_2 = i[11] if i[11] != None else "-"
+        try:
+            for i in fila:
+                topic_id = i[14]
+                highlight = i[1] if i[1] != None else ""
+                titulo = i[2]
+                link = i[3]
+                vendido_por = i[4] if i[4] != None else "-"
+                preco_antigo = i[7]
+                preco_novo = i[8]
+                porcentagem_desconto = i[9]
+                imagem = i[12]
+                detalhe_envio = i[10] if i[10] != None else "-"
+                detalhe_envio_2 = i[11] if i[11] != None else "-"
 
-            mensagem = (
-                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
-                f"<i>✨Oferta imperdível para você! {highlight}✨</i>\n\n"
-                f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
-                f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
-                f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
-                f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
-                f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-            )
+                mensagem = (
+                    f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
+                    f"<i>✨Oferta imperdível para você! {highlight}✨</i>\n\n"
+                    f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
+                    f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
+                    f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
+                    f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
+                    f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
+                )
 
-            await self.__enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(5)
-
+                await self.enviar_telegram_message(mensagem, topic_id)
+                await asyncio.sleep(5)
+        finally:
+            await self.bot.close()
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
