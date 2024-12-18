@@ -113,9 +113,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"12:25",
-        "segundo_horario":"12:30",
-        "terceiro_horario":"12:35"}
+        "primeiro_horario":"20:30",
+        "segundo_horario":"20:45",
+        "terceiro_horario":"20:55"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -153,7 +153,6 @@ class ScheduleJob(ExecutarColeta):
         while True:
             schedule.run_pending()
             time.sleep(1)
-
     
 if __name__ == "__main__":
     exe = ScheduleJob()

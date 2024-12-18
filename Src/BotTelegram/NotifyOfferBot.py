@@ -4,6 +4,8 @@ import time
 import pandas as pd
 import asyncio
 from telegram import Bot
+from telegram.request import HTTPXRequest
+from telegram.error import TimedOut
 import os
 from dotenv import load_dotenv
 import psycopg2
@@ -23,10 +25,23 @@ class NotifyOfferBot:
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-        self.bot = Bot(token=self.TOKEN)
+        self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=15.0, read_timeout=15.0))
 
-    async def __enviar_telegram_message(self, text, topic_id):
-        await self.bot.send_message(chat_id=self.CHAT_ID, text=text, message_thread_id=topic_id, parse_mode="HTML")
+    async def __enviar_telegram_message(self, text, topic_id, retries=3):
+        for attempt in range(retries):
+            try:
+                await self.bot.send_message(
+                    chat_id=self.CHAT_ID,
+                    text=text,
+                    message_thread_id=topic_id,
+                    parse_mode="HTML"
+                )
+                break
+            except TimedOut:
+                print(f"Tentativa {attempt + 1}/{retries} falhou. Reenviando...")
+                await asyncio.sleep(5)
+        else:
+            print("Falha ao enviar mensagem após múltiplas tentativas.")
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
@@ -102,6 +117,7 @@ class NotifyOfferBot:
         novos_itens = []
 
         nome_itens = [item[2] for item in antiga_coleta]
+        print(nome_itens)
         
         for item in nova_coleta:
             if item[2] not in nome_itens:
@@ -150,21 +166,21 @@ class NotifyOfferBot:
             )
 
             await self.__enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(3)
+            await asyncio.sleep(5)
 
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
-        print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-        print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
+        # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
+        # print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+        # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
         print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-        async def main():
-            await asyncio.gather(
-                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-                exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-                exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-            )
-        asyncio.run(main())
+        # async def main():
+        #     await asyncio.gather(
+        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+        #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+        #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+        #     )
+        # asyncio.run(main())
     except Exception as e:
         print(f"Erro na execução: {e}")
