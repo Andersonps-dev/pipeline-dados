@@ -171,14 +171,14 @@ class NotifyOfferBot:
             await self.bot.close()
         finally:
             pass
-        
+
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
         # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
-        # print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+        print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
         # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
-        print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+        # print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
         # async def main():
         #     await asyncio.gather(
         #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
