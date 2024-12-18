@@ -17,7 +17,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from Transformacao.main import Transformacao
 from BotTelegram.NotifyOfferBot import NotifyOfferBot
-from ControleExecucao.ExecutarColeta import ExecutarColeta
+from ExecutarColeta import ExecutarColeta
 
 class ScheduleJob(ExecutarColeta):
     def __init__(self):
@@ -30,11 +30,6 @@ class ScheduleJob(ExecutarColeta):
             "ofertas_games": "2"
         }
 
-        self.default_info_query = {"porcentagem_maior_igual": 40, 
-                                   "porcentagem_menor": 100,
-                                    "desconto_reais": 600, 
-                                    "limit_sql": 50}        
-        
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
                                                          
     def coletar_dados(self):
@@ -118,9 +113,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"06:00",
-        "segundo_horario":"09:00",
-        "terceiro_horario":"16:00"}
+        "primeiro_horario":"09:18",
+        "segundo_horario":"09:35",
+        "terceiro_horario":"09:50"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -144,10 +139,7 @@ class ScheduleJob(ExecutarColeta):
                 agendar_tarefas(horario, [self.envios_itens_novos, self.envios_itens_reducao_preco])
         
         
-        tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais(self.default_info_query["porcentagem_maior_igual"], 
-                                                                                     self.default_info_query["porcentagem_menor"], 
-                                                                                     self.default_info_query["desconto_reais"], 
-                                                                                     self.default_info_query["limit_sql"])]
+        tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais]
         
         agendar_tarefas(horarios["primeiro_horario"], tarefas_fixas)
         

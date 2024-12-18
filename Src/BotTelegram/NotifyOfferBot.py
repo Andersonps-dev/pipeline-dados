@@ -21,6 +21,11 @@ class NotifyOfferBot:
         load_dotenv()
         self.estancia_bot()
 
+        self.default_info_query = {"porcentagem_maior_igual": 40, 
+                            "porcentagem_menor": 100,
+                            "desconto_reais": 600, 
+                            "limit_sql": 50}        
+
     def estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
