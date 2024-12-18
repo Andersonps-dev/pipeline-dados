@@ -117,7 +117,6 @@ class NotifyOfferBot:
         novos_itens = []
 
         nome_itens = [item[2] for item in antiga_coleta]
-        print(nome_itens)
         
         for item in nova_coleta:
             if item[2] not in nome_itens:

@@ -29,6 +29,11 @@ class ScheduleJob(ExecutarColeta):
             "ofertas_casa_moveis_decoracao": "4",
             "ofertas_games": "2"
         }
+
+        self.default_info_query = {"porcentagem_maior_igual": 40, 
+                                   "porcentagem_menor": 100,
+                                    "desconto_reais": 600, 
+                                    "limit_sql": 50}        
         
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
                                                          
@@ -86,7 +91,7 @@ class ScheduleJob(ExecutarColeta):
 
         return fila_ordenada
     
-    def envios_iniciais(self, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=100):
+    def envios_iniciais(self, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
         async def main():
             fila = self.fila_bases_iniciais(porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql)
             await asyncio.gather(
@@ -113,9 +118,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"20:30",
-        "segundo_horario":"20:45",
-        "terceiro_horario":"20:55"}
+        "primeiro_horario":"06:00",
+        "segundo_horario":"09:00",
+        "terceiro_horario":"16:00"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -139,7 +144,11 @@ class ScheduleJob(ExecutarColeta):
                 agendar_tarefas(horario, [self.envios_itens_novos, self.envios_itens_reducao_preco])
         
         
-        tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais]
+        tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais(self.default_info_query["porcentagem_maior_igual"], 
+                                                                                     self.default_info_query["porcentagem_menor"], 
+                                                                                     self.default_info_query["desconto_reais"], 
+                                                                                     self.default_info_query["limit_sql"])]
+        
         agendar_tarefas(horarios["primeiro_horario"], tarefas_fixas)
         
         tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
