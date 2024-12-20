@@ -25,7 +25,7 @@ class NotifyOfferBot:
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-        self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=15.0, read_timeout=15.0))
+        self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=15.0, read_timeout=25.0))
 
     async def enviar_telegram_message(self, text, topic_id, retries=3):
         for attempt in range(retries):
@@ -38,7 +38,6 @@ class NotifyOfferBot:
                 )
                 break
             except TimedOut:
-                print(f"Tentativa {attempt + 1}/{retries} falhou. Reenviando...")
                 await asyncio.sleep(5)
         else:
             print("Falha ao enviar mensagem após múltiplas tentativas.")
@@ -144,16 +143,16 @@ class NotifyOfferBot:
         try:
             for i in fila:
                 topic_id = i[14]
-                highlight = i[1] if i[1] != None else ""
+                highlight = i[1] if i[1] else ""
                 titulo = i[2]
                 link = i[3]
-                vendido_por = i[4] if i[4] != None else "-"
+                vendido_por = i[4] if i[4] else "-"
                 preco_antigo = i[7]
                 preco_novo = i[8]
                 porcentagem_desconto = i[9]
                 imagem = i[12]
-                detalhe_envio = i[10] if i[10] != None else "-"
-                detalhe_envio_2 = i[11] if i[11] != None else "-"
+                detalhe_envio = i[10] if i[10] else "-"
+                detalhe_envio_2 = i[11] if i[11] else "-"
 
                 mensagem = (
                     f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
@@ -167,24 +166,25 @@ class NotifyOfferBot:
 
                 await self.enviar_telegram_message(mensagem, topic_id)
                 await asyncio.sleep(15)
-        except:
+        except Exception as e:
+            print(f"Erro ao enviar mensagens: {e}")
             await self.bot.close()
         finally:
-            pass
+            await self.bot.session.close()
 
-if __name__ == "__main__":
-    try:
-        exe = NotifyOfferBot()
-        # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
-        print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-        # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
-        # print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-        # async def main():
-        #     await asyncio.gather(
-        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-        #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-        #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-        #     )
-        # asyncio.run(main())
-    except Exception as e:
-        print(f"Erro na execução: {e}")
+# if __name__ == "__main__":
+#     try:
+#         exe = NotifyOfferBot()
+#         # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
+#         print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+#         # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
+#         print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+#         # async def main():
+#         #     await asyncio.gather(
+#         #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+#         #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+#         #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+#         #     )
+#         # asyncio.run(main())
+#     except Exception as e:
+#         print(f"Erro na execução: {e}")

@@ -118,9 +118,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         
         horarios = {
-        "primeiro_horario":"11:30",
-        "segundo_horario":"11:40",
-        "terceiro_horario":"12:30"}
+        "primeiro_horario":"06:00",
+        "segundo_horario":"11:00",
+        "terceiro_horario":"16:00"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -149,7 +149,7 @@ class ScheduleJob(ExecutarColeta):
         agendar_tarefas(horarios["primeiro_horario"], tarefas_fixas)
         
         tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
-                
+        
         agendar_tarefas(horarios["segundo_horario"], tarefas_fixas_sem_envios)
         condicional_envios(horarios["segundo_horario"], 35, 40, 200, 10)
         

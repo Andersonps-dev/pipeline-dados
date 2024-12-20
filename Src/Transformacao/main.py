@@ -77,12 +77,12 @@ class Transformacao(NotifyOfferBot):
             print(f"Erro ao conectar ao banco de dados: {e}")
             return None
 
-if __name__ == "__main__":
-    try:
-        exe = Transformacao()
-        conn = exe.criar_conexao_sqlite3("dados_coletados.db")
-        exe.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao", topic_id="4")
-        exe.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id="2")
-        conn.close()
-    except Exception as e:
-        print(f"Erro na execução: {e}")
+# if __name__ == "__main__":
+#     try:
+#         exe = Transformacao()
+#         conn = exe.criar_conexao_sqlite3("dados_coletados.db")
+#         exe.tratar_base(conn=conn, nome_arquivo="dados_casa_moveis_decoracao.jsonl", nome_tabela_bd="dados_casa_moveis_decoracao", topic_id="4")
+#         exe.tratar_base(conn=conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id="2")
+#         conn.close()
+#     except Exception as e:
+#         print(f"Erro na execução: {e}")

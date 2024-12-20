@@ -26,10 +26,10 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
         finally:
             os.chdir(self.diretorio_principal)
 
-if __name__ == "__main__":
-    try:
-        exe = ExecutarColeta()
-        exe.executar_scrapy("ofertas_games", "dados_games")
-        exe.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")        
-    except Exception as e:
-        print(f"Erro ao executar coleta: {e}")
+# if __name__ == "__main__":
+#     try:
+#         exe = ExecutarColeta()
+#         exe.executar_scrapy("ofertas_games", "dados_games")
+#         exe.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")        
+#     except Exception as e:
+#         print(f"Erro ao executar coleta: {e}")
