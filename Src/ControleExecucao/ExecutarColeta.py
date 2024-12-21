@@ -16,7 +16,7 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
         self.python_venv = os.path.join(self.diretorio_principal, ".venv", "Scripts", "python.exe")
     
     def executar_scrapy(self, coleta, nome_arquivo):
-        self.salvar_dados_antigos(nome_arquivo, f"{nome_arquivo}_tabela_anterior", limit_sql=50)
+        self.salvar_dados_antigos(nome_arquivo, f"{nome_arquivo}_tabela_anterior")
         try:
             scrapy_dir = os.path.join(self.diretorio_principal, "Src", "Coleta", "Coleta", "spiders")
             os.chdir(scrapy_dir)
@@ -26,10 +26,10 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
         finally:
             os.chdir(self.diretorio_principal)
 
-# if __name__ == "__main__":
-#     try:
-#         exe = ExecutarColeta()
-#         exe.executar_scrapy("ofertas_games", "dados_games")
-#         exe.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")        
-#     except Exception as e:
-#         print(f"Erro ao executar coleta: {e}")
+if __name__ == "__main__":
+    try:
+        exe = ExecutarColeta()
+        exe.executar_scrapy("ofertas_games", "dados_games")
+        exe.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")        
+    except Exception as e:
+        print(f"Erro ao executar coleta: {e}")

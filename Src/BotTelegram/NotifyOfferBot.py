@@ -21,6 +21,8 @@ class NotifyOfferBot:
         load_dotenv()
         self.estancia_bot()      
 
+        self.limit_query_sql = 10
+
     def estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
@@ -46,7 +48,8 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
+    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600):
+        limit_sql = self.limit_query_sql
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -56,7 +59,8 @@ class NotifyOfferBot:
 
         return resultado
     
-    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
+    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600):
+        limit_sql = self.limit_query_sql
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -140,51 +144,45 @@ class NotifyOfferBot:
         return novos_precos
     
     async def enviar_menssagem_telegram(self, fila):
-        try:
-            for i in fila:
-                topic_id = i[14]
-                highlight = i[1] if i[1] else ""
-                titulo = i[2]
-                link = i[3]
-                vendido_por = i[4] if i[4] else "-"
-                preco_antigo = i[7]
-                preco_novo = i[8]
-                porcentagem_desconto = i[9]
-                imagem = i[12]
-                detalhe_envio = i[10] if i[10] else "-"
-                detalhe_envio_2 = i[11] if i[11] else "-"
+        for i in fila:
+            topic_id = i[14]
+            highlight = i[1] if i[1] else ""
+            titulo = i[2]
+            link = i[3]
+            vendido_por = i[4] if i[4] else "-"
+            preco_antigo = i[7]
+            preco_novo = i[8]
+            porcentagem_desconto = i[9]
+            imagem = i[12]
+            detalhe_envio = i[10] if i[10] else "-"
+            detalhe_envio_2 = i[11] if i[11] else "-"
 
-                mensagem = (
-                    f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
-                    f"<i>✨Oferta imperdível para você! {highlight}✨</i>\n\n"
-                    f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
-                    f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
-                    f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
-                    f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
-                    f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-                )
+            mensagem = (
+                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
+                f"<i>✨Oferta imperdível para você! {highlight}✨</i>\n\n"
+                f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
+                f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
+                f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
+                f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
+                f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
+            )
 
-                await self.enviar_telegram_message(mensagem, topic_id)
-                await asyncio.sleep(15)
-        except Exception as e:
-            print(f"Erro ao enviar mensagens: {e}")
-            await self.bot.close()
-        finally:
-            await self.bot.session.close()
+            await self.enviar_telegram_message(mensagem, topic_id)
+            await asyncio.sleep(15)
 
-# if __name__ == "__main__":
-#     try:
-#         exe = NotifyOfferBot()
-#         # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
-#         print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-#         # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
-#         print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-#         # async def main():
-#         #     await asyncio.gather(
-#         #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-#         #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-#         #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-#         #     )
-#         # asyncio.run(main())
-#     except Exception as e:
-#         print(f"Erro na execução: {e}")
+if __name__ == "__main__":
+    try:
+        exe = NotifyOfferBot()
+        # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
+        print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+        # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
+        print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+        # async def main():
+        #     await asyncio.gather(
+        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+        #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+        #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+        #     )
+        # asyncio.run(main())
+    except Exception as e:
+        print(f"Erro na execução: {e}")
