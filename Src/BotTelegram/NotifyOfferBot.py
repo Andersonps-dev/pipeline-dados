@@ -19,15 +19,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 class NotifyOfferBot:
     def __init__(self):
         load_dotenv()
-        self.estancia_bot()      
-
-        self.limit_query_sql = 10
+        self.estancia_bot()
 
     def estancia_bot(self):
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-        self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=15.0, read_timeout=25.0))
+        self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=10.0, read_timeout=15.0))
 
     async def enviar_telegram_message(self, text, topic_id, retries=3):
         for attempt in range(retries):
@@ -48,8 +46,7 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600):
-        limit_sql = self.limit_query_sql
+    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -59,8 +56,7 @@ class NotifyOfferBot:
 
         return resultado
     
-    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600):
-        limit_sql = self.limit_query_sql
+    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -170,19 +166,19 @@ class NotifyOfferBot:
             await self.enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(15)
 
-if __name__ == "__main__":
-    try:
-        exe = NotifyOfferBot()
-        # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
-        print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-        # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
-        print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
-        # async def main():
-        #     await asyncio.gather(
-        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-        #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-        #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-        #     )
-        # asyncio.run(main())
-    except Exception as e:
-        print(f"Erro na execução: {e}")
+# if __name__ == "__main__":
+#     try:
+#         exe = NotifyOfferBot()
+#         # print(exe.verificar_reducao_preco("dados_games", "dados_games_tabela_anterior"))
+#         print(exe.verificar_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+#         # print(exe.verificar_itens_novos("dados_games", "dados_games_tabela_anterior"))
+#         print(exe.verificar_itens_novos("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior"))
+#         # async def main():
+#         #     await asyncio.gather(
+#         #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+#         #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+#         #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+#         #     )
+#         # asyncio.run(main())
+#     except Exception as e:
+#         print(f"Erro na execução: {e}")

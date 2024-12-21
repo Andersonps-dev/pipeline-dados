@@ -48,9 +48,9 @@ class ScheduleJob(ExecutarColeta):
         self.tratar_base(conn=self.conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id=self.grupos["ofertas_games"])
         self.conn.close()
         
-    def fila_bases_iniciais(self,  porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=10):
+    def fila_bases_iniciais(self,  porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
         limit_query_sql = self.limit_sql
-        bases_envios_iniciais = [self.filtro_envios(base, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_query_sql) for base in self.bases_para_envios_iniciais]
+        bases_envios_iniciais = [self.filtro_envios(base, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql) for base in self.bases_para_envios_iniciais]
         
         fila = []
 
@@ -62,7 +62,7 @@ class ScheduleJob(ExecutarColeta):
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return fila_ordenada
+        return print(fila_ordenada)
     
     def fila_itens_novos(self):
         bases_envios_iniciais = [self.verificar_itens_novos(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
@@ -95,9 +95,8 @@ class ScheduleJob(ExecutarColeta):
         return fila_ordenada
     
     def envios_iniciais(self, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600):
-        limit_query_sql = self.limit_sql
         async def main():
-            fila = self.fila_bases_iniciais(porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_query_sql)
+            fila = self.fila_bases_iniciais(porcentagem_maior_igual, porcentagem_menor, desconto_reais)
             await asyncio.gather(
                 self.enviar_menssagem_telegram(fila)
             )
@@ -125,9 +124,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         limit_query_sql = self.limit_sql
         horarios = {
-        "primeiro_horario":"12:25",
-        "segundo_horario":"12:40",
-        "terceiro_horario":"13:00"}
+        "primeiro_horario":"13:41",
+        "segundo_horario":"14:00",
+        "terceiro_horario":"14:20"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -146,7 +145,7 @@ class ScheduleJob(ExecutarColeta):
                                               self.envios_iniciais(porcentagem_maior_igual=porcentagem_maior_igual, 
                                                                        porcentagem_menor=porcentagem_menor,
                                                                        desconto_reais=desconto_reais, 
-                                                                       limit_sql=limit_query_sql)])
+                                                                       limit_sql=limit_sql)])
             else:
                 agendar_tarefas(horario, [self.envios_itens_novos, self.envios_itens_reducao_preco])
         
@@ -169,4 +168,4 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.logica_envios()
+    exe.fila_bases_iniciais()
