@@ -124,9 +124,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         limit_query_sql = self.limit_sql
         horarios = {
-        "primeiro_horario":"13:41",
-        "segundo_horario":"14:00",
-        "terceiro_horario":"14:20"}
+        "primeiro_horario":"22:23",
+        "segundo_horario":"22:40",
+        "terceiro_horario":"23:00"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -168,4 +168,4 @@ class ScheduleJob(ExecutarColeta):
     
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.fila_bases_iniciais()
+    exe.logica_envios()
