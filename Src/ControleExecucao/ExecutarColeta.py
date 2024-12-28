@@ -8,6 +8,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Transformacao.main import Transformacao
 from BotTelegram.NotifyOfferBot import NotifyOfferBot
 
+from config import *
+
 class ExecutarColeta(Transformacao, NotifyOfferBot):
     def __init__(self):
         super().__init__()
@@ -15,7 +17,7 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
         self.diretorio_principal = os.path.abspath(os.getcwd())
         self.python_venv = os.path.join(self.diretorio_principal, ".venv", "Scripts", "python.exe")
 
-        self.limit_query_sql = 10
+        self.limit_query_sql = LIMIT_SQL
     
     def executar_scrapy(self, coleta, nome_arquivo):
         self.salvar_dados_antigos(nome_arquivo, f"{nome_arquivo}_tabela_anterior", limit_sql=self.limit_query_sql)

@@ -19,6 +19,8 @@ from Transformacao.main import Transformacao
 from BotTelegram.NotifyOfferBot import NotifyOfferBot
 from ExecutarColeta import ExecutarColeta
 
+from config import *
+
 class ScheduleJob(ExecutarColeta):
     def __init__(self):
         super().__init__()
@@ -32,11 +34,7 @@ class ScheduleJob(ExecutarColeta):
 
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
 
-        self.limit_sql = 5
-    
-    def set_limit(self, limit_sql=None):
-        limit_sql = self.limit_sql
-        return limit_sql
+        self.limit_sql = LIMIT_SQL
                                                          
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
@@ -113,13 +111,14 @@ class ScheduleJob(ExecutarColeta):
         fila_reducao = self.fila_itens_reducao_preco()
         
         fila_novos.extend(fila_reducao)
-        async def main():
-            fila_geral = sorted(fila_novos, key=lambda x: x[0])
-            await asyncio.gather(
-                self.enviar_menssagem_telegram(fila_geral)
-            )
-            await self.bot.close()
-        asyncio.run(main())
+        fila_geral = sorted(fila_novos, key=lambda x: x[0])
+        print(fila_geral)
+        # async def main():
+        #     await asyncio.gather(
+        #         self.enviar_menssagem_telegram(fila_geral)
+        #     )
+        #     await self.bot.close()
+        # asyncio.run(main())
 
     def execucao_completa(self):
         pass

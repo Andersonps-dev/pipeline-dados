@@ -16,17 +16,17 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from ControleExecucao.AgendaDisparos import ScheduleJob
+from config import *
 
-class NotifyOfferBot(ScheduleJob):
+class NotifyOfferBot:
     def __init__(self):
+        
         super().__init__()
         
         load_dotenv()
         self.estancia_bot()
-
-    def get_limit_sql(self):
-        return print(self.set_limit())
+        
+        self.limit_sql = LIMIT_SQL
 
     def estancia_bot(self):
         
@@ -54,24 +54,27 @@ class NotifyOfferBot(ScheduleJob):
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
+    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=None):
         
         limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
         
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} OR desconto_reais >= {desconto_reais} ORDER BY porcentagem_desconto DESC LIMIT {limit_sql}")
+        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} OR desconto_reais >= {desconto_reais} ORDER BY porcentagem_desconto DESC LIMIT {limit_query_sql}")
         resultado = cursor.fetchall()
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado
     
-    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
+    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=None):
+        
+        limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
+        
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        resultado = self.filtro_envios(tabela_atual, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql)
+        resultado = self.filtro_envios(tabela_atual, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql=limit_query_sql)
         
         cursor.execute(f"""
             CREATE TABLE IF NOT EXISTS {tabela_anterior} (
@@ -177,17 +180,17 @@ class NotifyOfferBot(ScheduleJob):
             await self.enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(15)
 
-exe = NotifyOfferBot()
-exe.get_limit_sql()
-# if __name__ == "__main__":
-#     try:
-#         exe = NotifyOfferBot()
-#         async def main():
-#             await asyncio.gather(
-#                 exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-#                 exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-#                 exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-#             )
-#         asyncio.run(main())
-#     except Exception as e:
-#         print(f"Erro na execução: {e}")
+if __name__ == "__main__":
+    try:
+        exe = NotifyOfferBot()
+        exe.filtro_envios("dados_casa_moveis_decoracao")
+        exe.filtro_envios("dados_casa_moveis_decoracao")
+        # async def main():
+        #     await asyncio.gather(
+        #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+        #         exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+        #         exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+        #     )
+        # asyncio.run(main())
+    except Exception as e:
+        print(f"Erro na execução: {e}")
