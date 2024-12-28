@@ -121,51 +121,7 @@ class ScheduleJob(ExecutarColeta):
             await self.bot.close()
         asyncio.run(main())
    
-    def logica_envios(self):
-        limit_query_sql = self.limit_sql
-        horarios = {
-        "primeiro_horario":"21:20",
-        "segundo_horario":"21:30",
-        "terceiro_horario":"16:50"}
-        
-        def agendar_tarefas(horario, tarefas):
-            for tarefa in tarefas:
-                schedule.every().day.at(horario).do(tarefa)
-            
-        def condicional_envios(horario, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql):
-            
-            fila_novos = self.fila_itens_novos() or []
-            fila_reducao = self.fila_itens_reducao_preco() or []
 
-            if (len(fila_novos) + len(fila_reducao)) <= 20:
-                agendar_tarefas(horario, 
-                                [self.envios_itens_novos, 
-                                 self.envios_itens_reducao_preco,
-                                          lambda:
-                                              self.envios_iniciais(porcentagem_maior_igual=porcentagem_maior_igual, 
-                                                                       porcentagem_menor=porcentagem_menor,
-                                                                       desconto_reais=desconto_reais, 
-                                                                       limit_sql=limit_sql)])
-            else:
-                agendar_tarefas(horario, [self.envios_itens_novos, self.envios_itens_reducao_preco])
-        
-        
-        tarefas_fixas = [self.coletar_dados, self.tratar_dados, self.envios_iniciais]
-        
-        agendar_tarefas(horarios["primeiro_horario"], tarefas_fixas)
-        
-        tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
-        
-        agendar_tarefas(horarios["segundo_horario"], tarefas_fixas_sem_envios)
-        condicional_envios(horarios["segundo_horario"], 35, 40, 200, 3)
-        
-        agendar_tarefas(horarios["terceiro_horario"], tarefas_fixas_sem_envios)
-        condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 3)
-        
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
-    
+
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.logica_envios()
