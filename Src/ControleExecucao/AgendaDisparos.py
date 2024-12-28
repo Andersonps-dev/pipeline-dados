@@ -110,6 +110,7 @@ class ScheduleJob(ExecutarColeta):
         fila_reducao = self.fila_itens_reducao_preco()
         
         fila_novos.extend(fila_reducao)
+        print(fila_novos)
         
         async def main():
             fila_geral = sorted(fila_novos, key=lambda x: x[0])
@@ -122,7 +123,7 @@ class ScheduleJob(ExecutarColeta):
     def execucao_completa(self):
         pass
    
-
 if __name__ == "__main__":
     exe = ScheduleJob()
-    exe.envios_itens_reducao_preco_e_novos()
+
+    
