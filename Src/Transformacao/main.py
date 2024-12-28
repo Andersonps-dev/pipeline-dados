@@ -18,11 +18,6 @@ from BotTelegram.NotifyOfferBot import *
 class Transformacao(NotifyOfferBot):
     def __init__(self):
         load_dotenv()
-        self.POSTGRES_DB = os.getenv("POSTGRES_DB")
-        self.POSTGRES_USER = os.getenv("POSTGRES_USER")
-        self.POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-        self.POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-        self.POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
         self.pasta_dados = r'..\pipeline-dados\Dados'
     
@@ -62,20 +57,6 @@ class Transformacao(NotifyOfferBot):
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
         return conn
-
-    def criar_conexao_postgres(self):
-        try:
-            conn = psycopg2.connect(
-                dbname=self.POSTGRES_DB,
-                user=self.POSTGRES_USER,
-                password=self.POSTGRES_PASSWORD,
-                host=self.POSTGRES_HOST,
-                port=self.POSTGRES_PORT
-            )
-            return conn
-        except psycopg2.Error as e:
-            print(f"Erro ao conectar ao banco de dados: {e}")
-            return None
 
 if __name__ == "__main__":
     try:

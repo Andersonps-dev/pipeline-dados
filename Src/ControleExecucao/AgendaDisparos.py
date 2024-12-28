@@ -106,19 +106,18 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main())
     
     def envios_itens_reducao_preco_e_novos(self):
-
         fila_novos = self.fila_itens_novos()
         fila_reducao = self.fila_itens_reducao_preco()
         
         fila_novos.extend(fila_reducao)
-        fila_geral = sorted(fila_novos, key=lambda x: x[0])
-        print(fila_geral)
-        # async def main():
-        #     await asyncio.gather(
-        #         self.enviar_menssagem_telegram(fila_geral)
-        #     )
-        #     await self.bot.close()
-        # asyncio.run(main())
+        
+        async def main():
+            fila_geral = sorted(fila_novos, key=lambda x: x[0])
+            await asyncio.gather(
+                self.enviar_menssagem_telegram(fila_geral)
+            )
+            await self.bot.close()
+        asyncio.run(main())
 
     def execucao_completa(self):
         pass
