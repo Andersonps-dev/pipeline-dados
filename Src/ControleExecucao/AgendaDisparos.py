@@ -121,7 +121,29 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main())
 
     def execucao_completa(self):
-        pass
+        
+        #as 06:00
+        self.coletar_dados()
+        self.tratar_base()        
+        self.envios_iniciais()
+        
+        #as 10:00
+        self.coletar_dados()
+        self.tratar_base()
+        if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
+            self.envios_itens_reducao_preco_e_novos()
+            self.envios_iniciais(35, 40, 400)
+        else:
+            self.envios_itens_reducao_preco_e_novos()
+        
+        #as 16:00
+        self.coletar_dados()
+        self.tratar_base()
+        if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
+            self.envios_itens_reducao_preco_e_novos()
+            self.envios_iniciais(30, 35, 400)
+        else:
+            self.envios_itens_reducao_preco_e_novos() 
    
 if __name__ == "__main__":
     exe = ScheduleJob()
