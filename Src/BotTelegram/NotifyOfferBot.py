@@ -184,7 +184,6 @@ if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
         exe.filtro_envios("dados_casa_moveis_decoracao")
-        exe.filtro_envios("dados_casa_moveis_decoracao")
         # async def main():
         #     await asyncio.gather(
         #         exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
