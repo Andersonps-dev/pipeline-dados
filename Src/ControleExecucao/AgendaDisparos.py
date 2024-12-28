@@ -122,6 +122,5 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main())
    
 
-
 if __name__ == "__main__":
     exe = ScheduleJob()
