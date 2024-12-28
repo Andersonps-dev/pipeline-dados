@@ -117,7 +117,7 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main())
 
     def execucao_completa(self):
-
+        pass
    
 
 if __name__ == "__main__":
