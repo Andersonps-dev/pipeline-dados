@@ -132,7 +132,7 @@ class ScheduleJob(ExecutarColeta):
         self.tratar_base()
         if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
             self.envios_itens_reducao_preco_e_novos()
-            self.envios_iniciais(35, 40, 400)
+            self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, desconto_reais=400)
         else:
             self.envios_itens_reducao_preco_e_novos()
         
@@ -141,11 +141,12 @@ class ScheduleJob(ExecutarColeta):
         self.tratar_base()
         if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
             self.envios_itens_reducao_preco_e_novos()
-            self.envios_iniciais(30, 35, 400)
+            self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, desconto_reais=200)
         else:
-            self.envios_itens_reducao_preco_e_novos() 
+            self.envios_itens_reducao_preco_e_novos()
    
 if __name__ == "__main__":
     exe = ScheduleJob()
+    exe.execucao_completa()
 
     
