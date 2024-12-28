@@ -33,6 +33,10 @@ class ScheduleJob(ExecutarColeta):
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
 
         self.limit_sql = 5
+    
+    def set_limit(self, limit_sql=None):
+        limit_sql = self.limit_sql
+        return limit_sql
                                                          
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
@@ -107,9 +111,10 @@ class ScheduleJob(ExecutarColeta):
 
         fila_novos = self.fila_itens_novos()
         fila_reducao = self.fila_itens_reducao_preco()
-
+        
+        fila_novos.extend(fila_reducao)
         async def main():
-            fila_geral = fila_novos + fila_reducao
+            fila_geral = sorted(fila_novos, key=lambda x: x[0])
             await asyncio.gather(
                 self.enviar_menssagem_telegram(fila_geral)
             )
@@ -122,3 +127,4 @@ class ScheduleJob(ExecutarColeta):
 
 if __name__ == "__main__":
     exe = ScheduleJob()
+    exe.envios_itens_reducao_preco_e_novos()

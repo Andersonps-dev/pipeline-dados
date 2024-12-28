@@ -16,12 +16,20 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-class NotifyOfferBot:
+from ControleExecucao.AgendaDisparos import ScheduleJob
+
+class NotifyOfferBot(ScheduleJob):
     def __init__(self):
+        super().__init__()
+        
         load_dotenv()
         self.estancia_bot()
 
+    def get_limit_sql(self):
+        return print(self.set_limit())
+
     def estancia_bot(self):
+        
         self.TOKEN = os.getenv('TELEGRAM_TOKEN')
         self.CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
@@ -47,6 +55,9 @@ class NotifyOfferBot:
         return conn    
     
     def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=50):
+        
+        limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
+        
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
@@ -166,15 +177,17 @@ class NotifyOfferBot:
             await self.enviar_telegram_message(mensagem, topic_id)
             await asyncio.sleep(15)
 
-if __name__ == "__main__":
-    try:
-        exe = NotifyOfferBot()
-        async def main():
-            await asyncio.gather(
-                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-                exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-                exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
-            )
-        asyncio.run(main())
-    except Exception as e:
-        print(f"Erro na execução: {e}")
+exe = NotifyOfferBot()
+exe.get_limit_sql()
+# if __name__ == "__main__":
+#     try:
+#         exe = NotifyOfferBot()
+#         async def main():
+#             await asyncio.gather(
+#                 exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
+#                 exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
+#                 exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+#             )
+#         asyncio.run(main())
+#     except Exception as e:
+#         print(f"Erro na execução: {e}")
