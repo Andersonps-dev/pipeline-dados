@@ -120,33 +120,36 @@ class ScheduleJob(ExecutarColeta):
             await self.bot.close()
         asyncio.run(main())
 
-    def execucao_completa(self):
-        
-        #as 06:00
-        self.coletar_dados()
-        self.tratar_base()        
-        self.envios_iniciais()
-        
-        #as 10:00
-        self.coletar_dados()
-        self.tratar_base()
-        if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
-            self.envios_itens_reducao_preco_e_novos()
-            self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, desconto_reais=400)
-        else:
-            self.envios_itens_reducao_preco_e_novos()
-        
-        #as 16:00
-        self.coletar_dados()
-        self.tratar_base()
-        if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
-            self.envios_itens_reducao_preco_e_novos()
-            self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, desconto_reais=200)
-        else:
-            self.envios_itens_reducao_preco_e_novos()
-   
-if __name__ == "__main__":
-    exe = ScheduleJob()
-    exe.execucao_completa()
+    def execucao_completa(self, horario):
+            self.coletar_dados()
+            self.tratar_base()
+
+            if horario == PRIMEIRO_HORARIO:
+                self.envios_iniciais()
+                
+            elif horario == SEGUNDO_HORARIO:
+                if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
+                    self.envios_itens_reducao_preco_e_novos()
+                    self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, desconto_reais=400)
+                else:
+                    self.envios_itens_reducao_preco_e_novos()
+                    
+            elif horario == TERCEIRO_HORARIO:
+                if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
+                    self.envios_itens_reducao_preco_e_novos()
+                    self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, desconto_reais=200)
+                else:
+                    self.envios_itens_reducao_preco_e_novos()
+
+    def configurar_agendador(self):
+        horarios = [PRIMEIRO_HORARIO, SEGUNDO_HORARIO, TERCEIRO_HORARIO]
+        for horario in horarios:
+            schedule.every().day.at(horario).do(self.execucao_completa, horario=horario)
+            
+    def executar_agendador(self):
+        self.configurar_agendador()
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
     
