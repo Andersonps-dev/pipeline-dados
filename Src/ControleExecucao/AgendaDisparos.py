@@ -28,16 +28,11 @@ class ScheduleJob(ExecutarColeta):
         self.grupos = {
             "ofertas_casa_moveis_decoracao": "4",
             "ofertas_games": "2"
-        }
-
-        self.default_info_query = {"porcentagem_maior_igual": 40, 
-                                    "porcentagem_menor": 100,
-                                    "desconto_reais": 600, 
-                                    "limit_sql": 50}  
+        } 
 
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
 
-        self.limit_sql = 10
+        self.limit_sql = 5
                                                          
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
@@ -64,7 +59,7 @@ class ScheduleJob(ExecutarColeta):
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return print(fila_ordenada)
+        return fila_ordenada
     
     def fila_itens_novos(self):
         bases_envios_iniciais = [self.verificar_itens_novos(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
@@ -129,9 +124,9 @@ class ScheduleJob(ExecutarColeta):
     def logica_envios(self):
         limit_query_sql = self.limit_sql
         horarios = {
-        "primeiro_horario":"21:00",
-        "segundo_horario":"21:25",
-        "terceiro_horario":"21:50"}
+        "primeiro_horario":"21:20",
+        "segundo_horario":"21:30",
+        "terceiro_horario":"16:50"}
         
         def agendar_tarefas(horario, tarefas):
             for tarefa in tarefas:
@@ -162,10 +157,10 @@ class ScheduleJob(ExecutarColeta):
         tarefas_fixas_sem_envios = [self.coletar_dados, self.tratar_dados]
         
         agendar_tarefas(horarios["segundo_horario"], tarefas_fixas_sem_envios)
-        condicional_envios(horarios["segundo_horario"], 35, 40, 200, 10)
+        condicional_envios(horarios["segundo_horario"], 35, 40, 200, 3)
         
         agendar_tarefas(horarios["terceiro_horario"], tarefas_fixas_sem_envios)
-        condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 10)
+        condicional_envios(horarios["terceiro_horario"], 30, 35, 200, 3)
         
         while True:
             schedule.run_pending()
