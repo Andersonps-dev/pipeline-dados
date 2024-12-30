@@ -102,7 +102,6 @@ class ScheduleJob(ExecutarColeta):
             await asyncio.gather(
                 self.enviar_menssagem_telegram(fila)
             )
-            await self.bot.close()
         asyncio.run(main())
     
     def envios_itens_reducao_preco_e_novos(self):

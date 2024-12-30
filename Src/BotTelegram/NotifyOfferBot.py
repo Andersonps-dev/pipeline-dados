@@ -44,6 +44,7 @@ class NotifyOfferBot:
                     message_thread_id=topic_id,
                     parse_mode="HTML"
                 )
+                await self.bot.close()  
                 break
             except RetryAfter as e:
                 wait_time = e.retry_after
