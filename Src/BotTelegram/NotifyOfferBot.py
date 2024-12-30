@@ -5,7 +5,7 @@ import pandas as pd
 import asyncio
 from telegram import Bot
 from telegram.request import HTTPXRequest
-from telegram.error import TimedOut
+from telegram.error import TimedOut, RetryAfter
 import os
 from dotenv import load_dotenv
 import psycopg2
@@ -45,8 +45,16 @@ class NotifyOfferBot:
                     parse_mode="HTML"
                 )
                 break
+            except RetryAfter as e:
+                wait_time = e.retry_after
+                print(f"Flood control exceeded. Retrying in {wait_time} seconds...")
+                await asyncio.sleep(wait_time)
             except TimedOut:
+                print(f"Tentativa {attempt + 1} falhou por timeout. Retentando em 5 segundos...")
                 await asyncio.sleep(5)
+            except Exception as e:
+                print(f"Erro ao enviar mensagem: {e}. Tentativa {attempt + 1} de {retries}.")
+                await asyncio.sleep(2)
         else:
             print("Falha ao enviar mensagem após múltiplas tentativas.")
 
