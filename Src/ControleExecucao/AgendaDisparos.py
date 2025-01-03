@@ -115,7 +115,6 @@ class ScheduleJob(ExecutarColeta):
             await asyncio.gather(
                 self.enviar_menssagem_em_lotes(fila_geral)
             )
-            await self.bot.close()
         asyncio.run(main())
 
     def execucao_completa(self, horario):
