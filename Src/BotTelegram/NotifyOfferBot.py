@@ -35,7 +35,7 @@ class NotifyOfferBot:
 
         self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=10.0, read_timeout=15.0))
 
-    async def enviar_telegram_message(self, text, topic_id):
+    async def enviar_telegram_message(self, text):
             try:
                 await self.bot.send_message(
                     chat_id=self.CHAT_ID,
@@ -149,13 +149,14 @@ class NotifyOfferBot:
 
         return novos_precos
     
-    async def enviar_menssagem_em_lotes(self, fila, lote_tamanho=5, intervalo_lote=300):
+    async def enviar_menssagem_em_lotes(self, fila, lote_tamanho=5, intervalo_lote=100):
+        self.estancia_bot()
         try:
             for i in range(0, len(fila), lote_tamanho):
                 lote = fila[i:i + lote_tamanho]
 
                 for mensagem_dados in lote:
-                    topic_id = mensagem_dados[13]
+                    # topic_id = mensagem_dados[13]
                     highlight = mensagem_dados[1] if mensagem_dados[1] else ""
                     titulo = mensagem_dados[2]
                     link = mensagem_dados[3]
