@@ -149,7 +149,7 @@ class NotifyOfferBot:
 
         return novos_precos
     
-    async def enviar_menssagem_em_lotes(self, fila, lote_tamanho=5, intervalo_lote=60):
+    async def enviar_menssagem_em_lotes(self, fila, lote_tamanho=10, intervalo_lote=300):
         self.estancia_bot()
         try:
             for i in range(0, len(fila), lote_tamanho):
