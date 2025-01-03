@@ -100,7 +100,7 @@ class ScheduleJob(ExecutarColeta):
         async def main():
             fila = self.fila_bases_iniciais(porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql=limit_query_sql)
             await asyncio.gather(
-                self.enviar_menssagem_telegram(fila)
+                self.enviar_menssagem_em_lotes(fila)
             )
         asyncio.run(main())
     
@@ -113,7 +113,7 @@ class ScheduleJob(ExecutarColeta):
         async def main():
             fila_geral = sorted(fila_novos, key=lambda x: x[0])
             await asyncio.gather(
-                self.enviar_menssagem_telegram(fila_geral)
+                self.enviar_menssagem_em_lotes(fila_geral)
             )
             await self.bot.close()
         asyncio.run(main())

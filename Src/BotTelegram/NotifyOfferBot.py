@@ -35,29 +35,16 @@ class NotifyOfferBot:
 
         self.bot = Bot(token=self.TOKEN, request=HTTPXRequest(connect_timeout=10.0, read_timeout=15.0))
 
-    async def enviar_telegram_message(self, text, topic_id, retries=3):
-        for attempt in range(retries):
+    async def enviar_telegram_message(self, text, topic_id):
             try:
                 await self.bot.send_message(
                     chat_id=self.CHAT_ID,
                     text=text,
-                    message_thread_id=topic_id,
+                    # topic_id=topic_id
                     parse_mode="HTML"
                 )
-                await self.bot.close()  
-                break
-            except RetryAfter as e:
-                wait_time = e.retry_after
-                print(f"Flood control exceeded. Retrying in {wait_time} seconds...")
-                await asyncio.sleep(wait_time)
-            except TimedOut:
-                print(f"Tentativa {attempt + 1} falhou por timeout. Retentando em 5 segundos...")
-                await asyncio.sleep(5)
             except Exception as e:
-                print(f"Erro ao enviar mensagem: {e}. Tentativa {attempt + 1} de {retries}.")
-                await asyncio.sleep(2)
-        else:
-            print("Falha ao enviar mensagem após múltiplas tentativas.")
+                print(f"Erro ao enviar mensagem: {e}") 
 
     def criar_conexao_sqlite3(self, db_name):
         conn = sqlite3.connect(db_name)
@@ -162,41 +149,49 @@ class NotifyOfferBot:
 
         return novos_precos
     
-    async def enviar_menssagem_telegram(self, fila):
-        for i in fila:
-            topic_id = i[14]
-            highlight = i[1] if i[1] else ""
-            titulo = i[2]
-            link = i[3]
-            vendido_por = i[4] if i[4] else "-"
-            preco_antigo = i[7]
-            preco_novo = i[8]
-            porcentagem_desconto = i[9]
-            imagem = i[12]
-            detalhe_envio = i[10] if i[10] else "-"
-            detalhe_envio_2 = i[11] if i[11] else "-"
+    async def enviar_menssagem_em_lotes(self, fila, lote_tamanho=5, intervalo_lote=300):
+        try:
+            for i in range(0, len(fila), lote_tamanho):
+                lote = fila[i:i + lote_tamanho]
 
-            mensagem = (
-                f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
-                f"<i>✨Oferta imperdível para você! {highlight}✨</i>\n\n"
-                f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
-                f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
-                f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
-                f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
-                f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
-            )
+                for mensagem_dados in lote:
+                    topic_id = mensagem_dados[13]
+                    highlight = mensagem_dados[1] if mensagem_dados[1] else ""
+                    titulo = mensagem_dados[2]
+                    link = mensagem_dados[3]
+                    vendido_por = mensagem_dados[4] if mensagem_dados[4] else "-"
+                    preco_antigo = mensagem_dados[7]
+                    preco_novo = mensagem_dados[8]
+                    porcentagem_desconto = mensagem_dados[9]
+                    imagem = mensagem_dados[12]
+                    detalhe_envio = mensagem_dados[10] if mensagem_dados[10] else "-"
+                    detalhe_envio_2 = mensagem_dados[11] if mensagem_dados[11] else "-"
 
-            await self.enviar_telegram_message(mensagem, topic_id)
-            await asyncio.sleep(15)
+                    mensagem = (
+                        f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
+                        f"<i>✨Oferta imperdível para você! {highlight}✨</i>\n\n"
+                        f"🔥 <b>Por apenas:</b> <b>R$ {preco_novo}</b> 🔥\n\n"
+                        f"🔖 <b>Preço antigo:</b> R$ {preco_antigo} ({porcentagem_desconto}% OFF ❌)\n"
+                        f"🏬 <b>Vendido por:</b> {vendido_por}\n\n"
+                        f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
+                        f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
+                    )
+
+                    # Envie a mensagem
+                    await self.enviar_telegram_message(mensagem)
+                    await asyncio.sleep(20)
+
+                print(f"Lote {i // lote_tamanho + 1} enviado. Aguardando {intervalo_lote} segundos antes do próximo lote...")
+                await asyncio.sleep(intervalo_lote)
+        finally:
+            await self.bot.close()
 
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
         async def main():
             await asyncio.gather(
-                exe.envios_telegram_todos_itens("dados_casa_moveis_decoracao"),
-                exe.envios_telegram_novas_ofertas("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4"),
-                exe.envios_telegram_reducao_preco("dados_casa_moveis_decoracao", "dados_casa_moveis_decoracao_tabela_anterior", "4")
+                exe.enviar_menssagem_em_lotes(exe.filtro_envios("dados_casa_moveis_decoracao", limit_sql=3))
             )
         asyncio.run(main())
     except Exception as e:
