@@ -145,7 +145,7 @@ class ScheduleJob(ExecutarColeta):
                 print("Fim dos envios terceiro horario...")
 
     def configurar_agendador(self):
-        horarios = [PRIMEIRO_HORARIO, SEGUNDO_HORARIO, TERCEIRO_HORARIO]
+        horarios = [PRIMEIRO_HORARIO_ENVIO, SEGUNDO_HORARIO_ENVIO, TERCEIRO_HORARIO_ENVIO]
         for horario in horarios:
             schedule.every().day.at(horario).do(self.execucao_completa, horario=horario)
             
