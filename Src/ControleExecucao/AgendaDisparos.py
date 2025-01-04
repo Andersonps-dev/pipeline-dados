@@ -45,11 +45,11 @@ class ScheduleJob(ExecutarColeta):
         self.tratar_base(conn=self.conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id=self.grupos["ofertas_games"])
         self.conn.close()
         
-    def fila_bases_iniciais(self,  porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=None):
+    def fila_bases_iniciais(self,  porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
 
         limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
 
-        bases_envios_iniciais = [self.filtro_envios(base, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql=limit_query_sql) for base in self.bases_para_envios_iniciais]
+        bases_envios_iniciais = [self.filtro_envios(base, porcentagem_maior_igual, porcentagem_menor, limit_sql=limit_query_sql) for base in self.bases_para_envios_iniciais]
         
         fila = []
 
@@ -93,12 +93,12 @@ class ScheduleJob(ExecutarColeta):
 
         return fila_ordenada
     
-    def envios_iniciais(self, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=None):
+    def envios_iniciais(self, porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
 
         limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
 
         async def main():
-            fila = self.fila_bases_iniciais(porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql=limit_query_sql)
+            fila = self.fila_bases_iniciais(porcentagem_maior_igual, porcentagem_menor, limit_sql=limit_query_sql)
             await asyncio.gather(
                 self.enviar_menssagem_em_lotes(fila)
             )
@@ -121,25 +121,25 @@ class ScheduleJob(ExecutarColeta):
             self.coletar_dados()
             self.tratar_dados()
 
-            if horario == PRIMEIRO_HORARIO:
+            if horario == PRIMEIRO_HORARIO_ENVIO:
                 print("Iniciando os envios primeiro horario...")
                 self.envios_iniciais()
                 print("Fim dos envios primeiro horario...")
                 
-            elif horario == SEGUNDO_HORARIO:
+            elif horario == SEGUNDO_HORARIO_ENVIO:
                 print("Iniciando os envios segundo horario...")
                 if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
                     self.envios_itens_reducao_preco_e_novos()
-                    self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, desconto_reais=600, limit_sql=10)
+                    self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, limit_sql=10)
                 else:
                     self.envios_itens_reducao_preco_e_novos()
                 print("Fim dos envios segundo horario...")
                     
-            elif horario == TERCEIRO_HORARIO:
+            elif horario == TERCEIRO_HORARIO_ENVIO:
                 print("Iniciando os envios terceiro horario...")
                 if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
                     self.envios_itens_reducao_preco_e_novos()
-                    self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, desconto_reais=600, limit_sql=10)
+                    self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, limit_sql=10)
                 else:
                     self.envios_itens_reducao_preco_e_novos()
                 print("Fim dos envios terceiro horario...")

@@ -27,6 +27,8 @@ class NotifyOfferBot:
         self.estancia_bot()
         
         self.limit_sql = LIMIT_SQL
+        self.lote_tamanho = LOTE_TAMANHO
+        self.tempo_intervalo_lote = TEMPO_INTERVALO_LOTE
 
     def estancia_bot(self):
         
@@ -50,27 +52,27 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=None):
+    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
         
         limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
         
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} OR desconto_reais >= {desconto_reais} ORDER BY porcentagem_desconto DESC LIMIT {limit_query_sql}")
+        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} ORDER BY porcentagem_desconto DESC LIMIT {limit_query_sql}")
         resultado = cursor.fetchall()
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado
     
-    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, desconto_reais=600, limit_sql=None):
+    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
         
         limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
         
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
 
-        resultado = self.filtro_envios(tabela_atual, porcentagem_maior_igual, porcentagem_menor, desconto_reais, limit_sql=limit_query_sql)
+        resultado = self.filtro_envios(tabela_atual, porcentagem_maior_igual, porcentagem_menor, limit_sql=limit_query_sql)
         
         cursor.execute(f"""
             CREATE TABLE IF NOT EXISTS {tabela_anterior} (
@@ -149,8 +151,12 @@ class NotifyOfferBot:
 
         return novos_precos
     
-    async def enviar_menssagem_em_lotes(self, fila, lote_tamanho=10, intervalo_lote=300):
+    async def enviar_menssagem_em_lotes(self, fila):
+        lote_tamanho = self.lote_tamanho
+        intervalo_lote = self.tempo_intervalo_lote
+
         self.estancia_bot()
+        
         try:
             for i in range(0, len(fila), lote_tamanho):
                 lote = fila[i:i + lote_tamanho]
@@ -165,8 +171,8 @@ class NotifyOfferBot:
                     preco_novo = mensagem_dados[8]
                     porcentagem_desconto = mensagem_dados[9]
                     imagem = mensagem_dados[12]
-                    detalhe_envio = mensagem_dados[10] if mensagem_dados[10] else "-"
-                    detalhe_envio_2 = mensagem_dados[11] if mensagem_dados[11] else "-"
+                    # detalhe_envio = mensagem_dados[10] if mensagem_dados[10] else "-"
+                    # detalhe_envio_2 = mensagem_dados[11] if mensagem_dados[11] else "-"
 
                     mensagem = (
                         f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"
@@ -177,8 +183,6 @@ class NotifyOfferBot:
                         f"🛒 <b>Garanta já o seu acessando o link abaixo:</b>\n"
                         f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
                     )
-
-                    # Envie a mensagem
                     await self.enviar_telegram_message(mensagem)
                     await asyncio.sleep(20)
 
