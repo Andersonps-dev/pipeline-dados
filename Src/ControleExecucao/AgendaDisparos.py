@@ -130,7 +130,7 @@ class ScheduleJob(ExecutarColeta):
                 print("Iniciando os envios segundo horario...")
                 if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
                     self.envios_itens_reducao_preco_e_novos()
-                    self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, desconto_reais=400, limit_sql=10)
+                    self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, desconto_reais=600, limit_sql=10)
                 else:
                     self.envios_itens_reducao_preco_e_novos()
                 print("Fim dos envios segundo horario...")
@@ -139,7 +139,7 @@ class ScheduleJob(ExecutarColeta):
                 print("Iniciando os envios terceiro horario...")
                 if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
                     self.envios_itens_reducao_preco_e_novos()
-                    self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, desconto_reais=200, limit_sql=10)
+                    self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, desconto_reais=600, limit_sql=10)
                 else:
                     self.envios_itens_reducao_preco_e_novos()
                 print("Fim dos envios terceiro horario...")
