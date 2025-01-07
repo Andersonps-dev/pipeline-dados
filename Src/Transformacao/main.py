@@ -14,10 +14,13 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from BotTelegram.NotifyOfferBot import *
+from config import *
 
 class Transformacao(NotifyOfferBot):
     def __init__(self):
         load_dotenv()
+
+        self.palavras_chaves = PALAVRAS_CHAVES
 
         self.pasta_dados = r'..\pipeline-dados\Dados'
     
