@@ -55,6 +55,91 @@ class Transformacao(NotifyOfferBot):
         df['data_coleta']  = datetime.now()
         df['topico_de_envio'] = f"{topic_id}"
 
+        df['preco_anterior'] = df['preco_anterior'].str.replace(',', '.').astype(float)
+        df['preco_atual'] = df['preco_atual'].str.replace(',', '.').astype(float)
+        df['desconto_reais'] = df['preco_anterior'] - df['preco_atual']
+
+        def calcular_pontuacao(row, lojas_vistas):
+            pontuacao = 0
+
+            # Regras baseadas em porcentagem de desconto
+            regras_porcentagem = [
+                {"condicao": lambda r: r["porcentagem_desconto"] >= 50, "pontuacao": 5},
+                {"condicao": lambda r: r["porcentagem_desconto"] >= 45, "pontuacao": 4},
+                {"condicao": lambda r: r["porcentagem_desconto"] >= 40, "pontuacao": 3},
+                {"condicao": lambda r: r["porcentagem_desconto"] >= 35, "pontuacao": 2},
+                {"condicao": lambda r: r["porcentagem_desconto"] >= 25, "pontuacao": 1},
+            ]
+
+            # Regras baseadas em desconto em reais
+            regras_reais = [
+                {"condicao": lambda r: r["desconto_reais"] > 1000 and r["porcentagem_desconto"] < 50, "pontuacao": 5},
+                {"condicao": lambda r: r["desconto_reais"] > 600 and r["porcentagem_desconto"] < 40, "pontuacao": 4},
+                {"condicao": lambda r: r["desconto_reais"] > 300 and r["porcentagem_desconto"] < 20, "pontuacao": 3},
+                {"condicao": lambda r: r["desconto_reais"] > 100 and r["porcentagem_desconto"] < 10, "pontuacao": 3},
+            ]
+
+            # Regras para colunas específicas
+            regras_gerais = [
+                {"condicao": lambda r: pd.notna(r["highlight"]), "pontuacao": 2},
+                {"condicao": lambda r: pd.notna(r["vendido_por"]), "pontuacao": 1},
+                {"condicao": lambda r: pd.notna(r["detalhe_envio"]) or pd.notna(r["detalhe_envio_2"]), "pontuacao": 1},
+            ]
+
+            # Penalidade para "vendido_por" em lojas vistas
+            penalidade_vendido_por = {
+                "condicao": lambda r: pd.notna(r["vendido_por"]) and r["vendido_por"] in lojas_vistas and r["vendido_por"] != "Por Mercado Livre",
+                "pontuacao": -3
+            }
+
+            # Aplicar regras baseadas em porcentagem
+            for regra in regras_porcentagem:
+                if regra["condicao"](row):
+                    pontuacao += regra["pontuacao"]
+
+            # Aplicar regras baseadas em desconto em reais
+            for regra in regras_reais:
+                if regra["condicao"](row):
+                    pontuacao += regra["pontuacao"]
+
+            # Aplicar regras gerais
+            for regra in regras_gerais:
+                if regra["condicao"](row):
+                    pontuacao += regra["pontuacao"]
+
+            # Aplicar penalidade
+            if penalidade_vendido_por["condicao"](row):
+                pontuacao += penalidade_vendido_por["pontuacao"]
+
+            # Adicionar loja a lojas vistas
+            if pd.notna(row["vendido_por"]):
+                lojas_vistas.add(row["vendido_por"])
+
+            # Palavras-chave no título
+            for palavra in self.palavras_chaves:
+                if palavra in row['titulo']:
+                    pontuacao += 2
+
+            return pontuacao
+
+        lojas_vistas = set()
+
+        df["pontuacao"] = df.apply(calcular_pontuacao, axis=1, lojas_vistas=lojas_vistas)
+
+        def classificar_relevancia(pontuacao):
+            if pontuacao >= 8:
+                return "Relevante"
+            elif pontuacao >= 6:
+                return "Alta-Relevância"
+            elif pontuacao >= 5:
+                return "Média-Relevância"
+            elif pontuacao >= 2:
+                return "Baixa-Relevância"
+            else:
+                return "Irrelevante"
+
+        df["relevancia"] = df["pontuacao"].apply(classificar_relevancia)
+
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='replace', index=False)
 
     def criar_conexao_sqlite3(self, db_name):
