@@ -64,36 +64,6 @@ class NotifyOfferBot:
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado
-            
-    def verificar_itens_novos(self, tabela, tabela_antiga):
-        nova_coleta = self.filtro_envios(tabela)
-        antiga_coleta = self.filtro_envios_antigos(tabela_antiga)
-
-        novos_itens = []
-
-        nome_itens = [item[2] for item in antiga_coleta]
-        
-        for item in nova_coleta:
-            if item[2] not in nome_itens:
-                novos_itens.append(item)
-
-        return novos_itens
-    
-    def verificar_reducao_preco(self, tabela, tabela_antiga):
-        nova_coleta = self.filtro_envios(tabela)
-        antiga_coleta = self.filtro_envios_antigos(tabela_antiga)
-        
-        novos_precos = []
-        
-        antiga_coleta_dict = {item[2]: float(item[7].replace(',', '.')) for item in antiga_coleta}
-        
-        for item in nova_coleta:
-            nome = item[1]
-            preco_novo = float(item[7].replace(',', '.'))
-            if nome in antiga_coleta_dict and preco_novo < antiga_coleta_dict[nome]:
-                novos_precos.append(item)
-
-        return novos_precos
     
     async def enviar_menssagem_em_lotes(self, fila):
         lote_tamanho = self.lote_tamanho
