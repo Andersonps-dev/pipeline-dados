@@ -64,18 +64,6 @@ class NotifyOfferBot:
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado
-        
-    def filtro_envios_antigos(self, tabela):
-        conn = self.criar_conexao_sqlite3("dados_coletados.db")
-        cursor = conn.cursor()
-
-        cursor.execute(f"SELECT * FROM {tabela}")
-        resultado = cursor.fetchall()
-
-        cursor.close()
-        conn.close()
-        
-        return resultado
             
     def verificar_itens_novos(self, tabela, tabela_antiga):
         nova_coleta = self.filtro_envios(tabela)
