@@ -34,7 +34,6 @@ class ScheduleJob(ExecutarColeta):
 
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
 
-        self.limit_sql = LIMIT_SQL
                                                          
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
@@ -45,11 +44,9 @@ class ScheduleJob(ExecutarColeta):
         self.tratar_base(conn=self.conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id=self.grupos["ofertas_games"])
         self.conn.close()
         
-    def fila_bases_iniciais(self,  porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
+    def fila_bases_iniciais(self):
 
-        limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
-
-        bases_envios_iniciais = [self.filtro_envios(base, porcentagem_maior_igual, porcentagem_menor, limit_sql=limit_query_sql) for base in self.bases_para_envios_iniciais]
+        bases_envios_iniciais = [self.filtro_envios(base) for base in self.bases_para_envios_iniciais]
         
         fila = []
 
@@ -63,57 +60,11 @@ class ScheduleJob(ExecutarColeta):
 
         return fila_ordenada
     
-    def fila_itens_novos(self):
-        bases_envios_iniciais = [self.verificar_itens_novos(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
-        
-        fila = []
-
-        if len(bases_envios_iniciais) > 0:
-            for i in bases_envios_iniciais:
-                fila.extend(i)            
-        else:
-            pass
-            
-        fila_ordenada = sorted(fila, key=lambda x: x[0])
-
-        return fila_ordenada
-
-    def fila_itens_reducao_preco(self):
-        bases_envios_iniciais = [self.verificar_reducao_preco(base, base + "_tabela_anterior") for base in self.bases_para_envios_iniciais]
-
-        fila = []
-
-        if len(bases_envios_iniciais) > 0:
-            for i in bases_envios_iniciais:
-                fila.extend(i)
-        else:
-            pass
-
-        fila_ordenada = sorted(fila, key=lambda x: x[0])
-
-        return fila_ordenada
-    
-    def envios_iniciais(self, porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
-
-        limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
-
+    def envios_iniciais(self):
         async def main():
-            fila = self.fila_bases_iniciais(porcentagem_maior_igual, porcentagem_menor, limit_sql=limit_query_sql)
+            fila = self.fila_bases_iniciais()
             await asyncio.gather(
                 self.enviar_menssagem_em_lotes(fila)
-            )
-        asyncio.run(main())
-    
-    def envios_itens_reducao_preco_e_novos(self):
-        fila_novos = self.fila_itens_novos()
-        fila_reducao = self.fila_itens_reducao_preco()
-        
-        fila_novos.extend(fila_reducao)
-        
-        async def main():
-            fila_geral = sorted(fila_novos, key=lambda x: x[0])
-            await asyncio.gather(
-                self.enviar_menssagem_em_lotes(fila_geral)
             )
         asyncio.run(main())
 

@@ -25,8 +25,7 @@ class NotifyOfferBot:
         
         load_dotenv()
         self.estancia_bot()
-        
-        self.limit_sql = LIMIT_SQL
+
         self.lote_tamanho = LOTE_TAMANHO
         self.tempo_intervalo_lote = TEMPO_INTERVALO_LOTE
         self.relevancia = RELEVANCIA
@@ -108,7 +107,8 @@ if __name__ == "__main__":
         exe = NotifyOfferBot()
         async def main():
             await asyncio.gather(
-                exe.enviar_menssagem_em_lotes(exe.filtro_envios("dados_casa_moveis_decoracao", limit_sql=3))
+                exe.enviar_menssagem_em_lotes(exe.filtro_envios("dados_casa_moveis_decoracao")),
+                exe.enviar_menssagem_em_lotes(exe.filtro_envios("dados_games"))
             )
         asyncio.run(main())
     except Exception as e:

@@ -1,4 +1,3 @@
-LIMIT_SQL = 5 # Define o limite de itens filtrar na consulta para enviar
 LOTE_TAMANHO = 10 # Define o tamanho do lote de mensagens que será enviadas no telegram
 TEMPO_INTERVALO_LOTE = 300 # Define o tempo em segundos entre o envio de cada lote
 RELEVANCIA = ["Alta-Relevância", "Média-Relevância", "Relevante"] # Relevancia definida pora os produtos
