@@ -64,50 +64,6 @@ class NotifyOfferBot:
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado
-    
-    def salvar_dados_antigos(self, tabela_atual, tabela_anterior,porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
-        
-        limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
-        
-        conn = self.criar_conexao_sqlite3("dados_coletados.db")
-        cursor = conn.cursor()
-
-        resultado = self.filtro_envios(tabela_atual, porcentagem_maior_igual, porcentagem_menor, limit_sql=limit_query_sql)
-        
-        cursor.execute(f"""
-            CREATE TABLE IF NOT EXISTS {tabela_anterior} (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                highlight TEXT,
-                titulo TEXT,
-                link TEXT,
-                vendido_por TEXT,
-                nota TEXT,
-                total_avaliacoes INTEGER,
-                preco_anterior FLOAT,
-                preco_atual FLOAT,
-                porcentagem_desconto INTEGER,
-                detalhe_envio TEXT,
-                detalhe_envio_2 TEXT,
-                data_coleta DATETIME,
-                imagem TEXT,
-                topico_de_envio TEXT,
-                desconto_reais REAL
-            )
-        """)
-        cursor.execute(f"DELETE FROM {tabela_anterior}")
-        
-        for row in resultado:
-            cursor.execute(f"""
-                INSERT INTO {tabela_anterior} (
-                    Id,highlight, titulo, link, vendido_por, nota, total_avaliacoes, 
-                    preco_anterior, preco_atual, porcentagem_desconto, detalhe_envio, 
-                    detalhe_envio_2, imagem, data_coleta, topico_de_envio, desconto_reais
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, row)
-
-        conn.commit()
-        cursor.close()
-        conn.close()
         
     def filtro_envios_antigos(self, tabela):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
