@@ -69,31 +69,7 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main())
 
     def execucao_completa(self, horario):
-            self.coletar_dados()
-            self.tratar_dados()
-
-            if horario == PRIMEIRO_HORARIO_ENVIO:
-                print("Iniciando os envios primeiro horario...")
-                self.envios_iniciais()
-                print("Fim dos envios primeiro horario...")
-                
-            elif horario == SEGUNDO_HORARIO_ENVIO:
-                print("Iniciando os envios segundo horario...")
-                if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
-                    self.envios_itens_reducao_preco_e_novos()
-                    self.envios_iniciais(porcentagem_maior_igual=35, porcentagem_menor=40, limit_sql=10)
-                else:
-                    self.envios_itens_reducao_preco_e_novos()
-                print("Fim dos envios segundo horario...")
-                    
-            elif horario == TERCEIRO_HORARIO_ENVIO:
-                print("Iniciando os envios terceiro horario...")
-                if len(self.fila_itens_novos()) + len(self.fila_itens_reducao_preco()) < 20:
-                    self.envios_itens_reducao_preco_e_novos()
-                    self.envios_iniciais(porcentagem_maior_igual=30, porcentagem_menor=35, limit_sql=10)
-                else:
-                    self.envios_itens_reducao_preco_e_novos()
-                print("Fim dos envios terceiro horario...")
+        pass
 
     def configurar_agendador(self):
         horarios = [PRIMEIRO_HORARIO_ENVIO, SEGUNDO_HORARIO_ENVIO, TERCEIRO_HORARIO_ENVIO]
