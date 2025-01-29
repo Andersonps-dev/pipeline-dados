@@ -29,6 +29,7 @@ class NotifyOfferBot:
         self.limit_sql = LIMIT_SQL
         self.lote_tamanho = LOTE_TAMANHO
         self.tempo_intervalo_lote = TEMPO_INTERVALO_LOTE
+        self.relevancia = RELEVANCIA
 
     def estancia_bot(self):
         
@@ -52,14 +53,13 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios(self, tabela, porcentagem_maior_igual=40, porcentagem_menor=100, limit_sql=None):
-        
-        limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
-        
+    def filtro_envios(self, tabela):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
+        
+        where_clause = " OR ".join([f"relevancia = '{relevancia}'" for relevancia in self.relevancia])
 
-        cursor.execute(f"SELECT *, (preco_anterior-preco_atual) as desconto_reais FROM {tabela} WHERE porcentagem_desconto >= {porcentagem_maior_igual} AND porcentagem_desconto <= {porcentagem_menor} ORDER BY porcentagem_desconto DESC LIMIT {limit_query_sql}")
+        cursor.execute(f"SELECT * FROM {tabela} WHERE {where_clause}")
         resultado = cursor.fetchall()
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
@@ -171,8 +171,6 @@ class NotifyOfferBot:
                     preco_novo = mensagem_dados[8]
                     porcentagem_desconto = mensagem_dados[9]
                     imagem = mensagem_dados[12]
-                    # detalhe_envio = mensagem_dados[10] if mensagem_dados[10] else "-"
-                    # detalhe_envio_2 = mensagem_dados[11] if mensagem_dados[11] else "-"
 
                     mensagem = (
                         f"<b>🌟 {titulo} <a href='{imagem}' style=>.</a>🌟</b>\n\n"

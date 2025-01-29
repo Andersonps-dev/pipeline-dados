@@ -1,6 +1,7 @@
 LIMIT_SQL = 5 # Define o limite de itens filtrar na consulta para enviar
 LOTE_TAMANHO = 10 # Define o tamanho do lote de mensagens que será enviadas no telegram
 TEMPO_INTERVALO_LOTE = 300 # Define o tempo em segundos entre o envio de cada lote
+RELEVANCIA = ["Alta-Relevância", "Média-Relevância", "Relevante"] # Relevancia definida pora os produtos
 
 
 HORARIOS_ATUALIZACAO = ["06:00", "17:00", "00:00"] # Horarios que os dados serão atualizados para verificar itens relevantes ou queda nos preços
@@ -10,3 +11,8 @@ SEGUNDO_HORARIO_ENVIO = "17:00"
 TERCEIRO_HORARIO_ENVIO = "17:20"
 
 PALAVRAS_CHAVES = ["Jogo De", "Kit"] # Palavras que serao usadas para dar mais pontuação para itens relevantes ex: Jogo De, Kit ou cama, etc
+
+
+# Comando usados que podem ser uteis -------->
+    # limit_query_sql = limit_sql if limit_sql is not None else self.limit_sql
+    # where_clause = " OR ".join([f"relevancia = '{relevancia}'" for relevancia in self.relevancia])
