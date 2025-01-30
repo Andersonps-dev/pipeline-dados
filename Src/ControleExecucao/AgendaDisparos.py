@@ -33,7 +33,7 @@ class ScheduleJob(ExecutarColeta):
         } 
 
         self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
-
+        self.relevancia = RELEVANCIA
                                                          
     def coletar_dados(self):
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
@@ -50,15 +50,12 @@ class ScheduleJob(ExecutarColeta):
         
         fila = []
 
-        if len(bases_envios_iniciais) == 0:
-            pass
-        else:
-            for i in bases_envios_iniciais:
-                fila.extend(i)
+        for i in bases_envios_iniciais:
+            fila.extend(i)
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return fila_ordenada
+        return print(fila_ordenada)
     
     def envios_iniciais(self):
         async def main():
@@ -84,4 +81,4 @@ class ScheduleJob(ExecutarColeta):
 
 if __name__ == "__main__":
     agenda = ScheduleJob()
-    agenda.executar_agendador()
+    agenda.fila_bases_iniciais()

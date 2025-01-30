@@ -128,15 +128,15 @@ class Transformacao(NotifyOfferBot):
 
         def classificar_relevancia(pontuacao):
             if pontuacao >= 8:
-                return "Relevante"
+                return "1"
             elif pontuacao >= 6:
-                return "Alta-Relevância"
+                return "2"
             elif pontuacao >= 5:
-                return "Média-Relevância"
+                return "3"
             elif pontuacao >= 2:
-                return "Baixa-Relevância"
+                return "4"
             else:
-                return "Irrelevante"
+                return "5"
 
         df["relevancia"] = df["pontuacao"].apply(classificar_relevancia)
 

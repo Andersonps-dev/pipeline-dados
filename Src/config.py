@@ -1,6 +1,6 @@
 LOTE_TAMANHO = 10 # Define o tamanho do lote de mensagens que será enviadas no telegram
 TEMPO_INTERVALO_LOTE = 300 # Define o tempo em segundos entre o envio de cada lote
-RELEVANCIA = ["Alta-Relevância", "Média-Relevância", "Relevante"] # Relevancia definida pora os produtos
+RELEVANCIA = ["1", "2", "3"] # Relevancia definida pora os produtos
 
 
 HORARIOS_ATUALIZACAO = ["06:00", "17:00", "00:00"] # Horarios que os dados serão atualizados para verificar itens relevantes ou queda nos preços

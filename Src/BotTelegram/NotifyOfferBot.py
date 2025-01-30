@@ -55,11 +55,14 @@ class NotifyOfferBot:
     def filtro_envios(self, tabela):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
-        
-        where_clause = " OR ".join([f"relevancia = '{relevancia}'" for relevancia in self.relevancia])
+    
+        where_clause = " OR ".join(["relevancia = ?" for _ in self.relevancia])
 
-        cursor.execute(f"SELECT * FROM {tabela} WHERE {where_clause}")
+        query = f"SELECT * FROM {tabela} WHERE {where_clause}"
+        cursor.execute(query, self.relevancia)
+        
         resultado = cursor.fetchall()
+        
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado
