@@ -65,7 +65,10 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main())
 
     def execucao_completa(self, horario):
-        pass
+        if horario == PRIMEIRO_HORARIO_ENVIO:
+            self.coletar_dados()
+            self.tratar_dados()
+            self.envios_iniciais()
 
     def configurar_agendador(self):
         horarios = [PRIMEIRO_HORARIO_ENVIO, SEGUNDO_HORARIO_ENVIO, TERCEIRO_HORARIO_ENVIO]
