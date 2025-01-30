@@ -62,7 +62,9 @@ class NotifyOfferBot:
         cursor.execute(query, self.relevancia)
         
         resultado = cursor.fetchall()
-        
+
+        resultado = sorted(resultado, key=lambda x: x[16])
+
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
         return resultado

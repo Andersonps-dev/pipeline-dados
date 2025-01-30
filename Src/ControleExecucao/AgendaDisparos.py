@@ -45,7 +45,6 @@ class ScheduleJob(ExecutarColeta):
         self.conn.close()
         
     def fila_bases_iniciais(self):
-
         bases_envios_iniciais = [self.filtro_envios(base) for base in self.bases_para_envios_iniciais]
         
         fila = []
@@ -55,7 +54,7 @@ class ScheduleJob(ExecutarColeta):
 
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
-        return print(fila_ordenada)
+        return fila_ordenada
     
     def envios_iniciais(self):
         async def main():
