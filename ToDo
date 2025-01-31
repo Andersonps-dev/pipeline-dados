@@ -2,4 +2,4 @@ juntar todos os arquivos em uma unica fila. -  AgendaDisparos ---------> OK
 Definir o horario de extração - AgendaDisparos ---------> OK
 Definir algoritimo para verificar novos itens relevantes - NotifyOfferBot ---------> OK
 Criar outro algoritimo de disparo - AgendaDisparos ---------> OK
-Ajustar formato da mensagem
+Ajustar os produtos que estão mandando o parcelado quando n tem preço anterior - NotifyOfferBot
