@@ -32,10 +32,16 @@ class ScheduleJob(ExecutarColeta):
             "ofertas_games": "2"
         } 
 
-        self.bases_para_envios_iniciais = ["dados_casa_moveis_decoracao", "dados_games"]
+        self.categorias = CATEGORIAS
         self.relevancia = RELEVANCIA
+
+        self.criar_tabela_fila_anterior()
                                                          
     def coletar_dados(self):
+        fila_atual = self.fila_tabelas()
+        self.salvar_fila_anterior(fila_atual)
+        
+        # Executa a nova coleta
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
         self.executar_scrapy("ofertas_games", "dados_games")
         
@@ -44,8 +50,8 @@ class ScheduleJob(ExecutarColeta):
         self.tratar_base(conn=self.conn, nome_arquivo="dados_games.jsonl", nome_tabela_bd="dados_games", topic_id=self.grupos["ofertas_games"])
         self.conn.close()
         
-    def fila_bases_iniciais(self):
-        bases_envios_iniciais = [self.filtro_envios(base) for base in self.bases_para_envios_iniciais]
+    def fila_tabelas(self):
+        bases_envios_iniciais = [self.filtro_tabelas(base) for base in self.categorias]
         
         fila = []
 
@@ -55,16 +61,108 @@ class ScheduleJob(ExecutarColeta):
         fila_ordenada = sorted(fila, key=lambda x: x[0])
 
         return fila_ordenada
+
+    def criar_tabela_fila_anterior(self):
+        query = """
+        CREATE TABLE IF NOT EXISTS fila_anterior (
+            id INTEGER PRIMARY KEY,
+            highlight TEXT,
+            titulo TEXT,
+            link TEXT,
+            vendido_por TEXT,
+            nota REAL,
+            total_avaliacoes INTEGER,
+            preco_anterior REAL,
+            preco_atual REAL,
+            porcentagem_desconto REAL,
+            detalhe_envio TEXT,
+            detalhe_envio_2 TEXT,
+            imagem TEXT,
+            data_coleta TEXT,
+            topico_de_envio TEXT,
+            desconto_reais REAL,
+            pontuacao INTEGER,
+            relevancia TEXT
+        );
+        """
+        self.conn.execute(query)
+        self.conn.commit()
+
+    def salvar_fila_anterior(self, fila):
+        self.conn.execute("DELETE FROM fila_anterior")
+        self.conn.commit()
+
+        query = """
+        INSERT INTO fila_anterior (
+            id, highlight, titulo, link, vendido_por, nota, total_avaliacoes, preco_anterior,
+            preco_atual, porcentagem_desconto, detalhe_envio, detalhe_envio_2, imagem,
+            data_coleta, topico_de_envio, desconto_reais, pontuacao, relevancia
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        """
+        self.conn.executemany(query, fila)
+        self.conn.commit()
+
+    def recuperar_fila_anterior(self):
+        query = "SELECT * FROM fila_anterior;"
+        cursor = self.conn.execute(query)
+        return cursor.fetchall()
     
-    def envios_iniciais(self):
+    def comparar_filas(self):
+        fila_anterior = self.recuperar_fila_anterior()
+        if not fila_anterior:
+            return self.fila_tabelas()
+        
+        fila_atual = self.fila_tabelas()
+        mudancas = []
+
+        mapa_fila_anterior = {item[2]: item for item in fila_anterior}
+
+        for item in fila_atual:
+            titulo = item[2]
+            relevancia = item[16]
+
+            if titulo not in mapa_fila_anterior:
+                mudancas.append(item)
+            else:
+                item_anterior = mapa_fila_anterior[titulo]
+                if item_anterior[16] != relevancia:
+                    mudancas.append(item)
+
+        return mudancas
+    
+    def envios_mensagens(self, itens=None):
         async def main():
-            fila = self.fila_bases_iniciais()
+            if itens is None:
+                itens = self.fila_tabelas()
             await asyncio.gather(
-                self.enviar_menssagem_em_lotes(fila)
+                self.enviar_menssagem_em_lotes(itens)
             )
         asyncio.run(main())
+    
+    def agendar_tarefas(self):
+        schedule.every().day.at("06:00").do(self.executar_tarefas)
+
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    def executar_tarefas(self):
+        print("Executando coleta de dados...")
+        self.coletar_dados()
+        
+        print("Tratando dados...")
+        self.tratar_dados()
+        
+        print("Comparando filas...")
+        mudancas = self.comparar_filas()
+        
+        if mudancas:
+            print("Enviando mensagens com itens alterados...")
+            self.envios_mensagens(mudancas)
+        else:
+            print("Nenhuma mudança detectada.")
 
 
 if __name__ == "__main__":
     agenda = ScheduleJob()
-    agenda.fila_bases_iniciais()
+    agenda.criar_tabela_fila_anterior()

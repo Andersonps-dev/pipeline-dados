@@ -3,11 +3,7 @@ TEMPO_INTERVALO_LOTE = 300 # Define o tempo em segundos entre o envio de cada lo
 RELEVANCIA = ["1", "2", "3"] # Relevancia definida pora os produtos
 
 
-HORARIOS_ATUALIZACAO = ["06:00", "17:00", "00:00"] # Horarios que os dados serão atualizados para verificar itens relevantes ou queda nos preços
-
-PRIMEIRO_HORARIO_ENVIO = "16:40"
-SEGUNDO_HORARIO_ENVIO = "17:00"
-TERCEIRO_HORARIO_ENVIO = "17:20"
+CATEGORIAS = ["dados_casa_moveis_decoracao", "dados_games"]
 
 PALAVRAS_CHAVES = ["Jogo De", "Kit"] # Palavras que serao usadas para dar mais pontuação para itens relevantes ex: Jogo De, Kit ou cama, etc
 

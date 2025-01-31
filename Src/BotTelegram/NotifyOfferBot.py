@@ -52,7 +52,7 @@ class NotifyOfferBot:
         conn = sqlite3.connect(db_name)
         return conn    
     
-    def filtro_envios(self, tabela):
+    def filtro_tabelas(self, tabela):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
         cursor = conn.cursor()
     
@@ -67,7 +67,7 @@ class NotifyOfferBot:
 
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
-        return resultado
+        return print(resultado)
     
     async def enviar_menssagem_em_lotes(self, fila):
         lote_tamanho = self.lote_tamanho
@@ -110,11 +110,12 @@ class NotifyOfferBot:
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        async def main():
-            await asyncio.gather(
-                exe.enviar_menssagem_em_lotes(exe.filtro_envios("dados_casa_moveis_decoracao")),
-                exe.enviar_menssagem_em_lotes(exe.filtro_envios("dados_games"))
-            )
-        asyncio.run(main())
+        exe.filtro_tabelas("dados_casa_moveis_decoracao")
+        # async def main():
+        #     await asyncio.gather(
+        #         exe.enviar_menssagem_em_lotes(exe.filtro_tabelas("dados_casa_moveis_decoracao")),
+        #         exe.enviar_menssagem_em_lotes(exe.filtro_tabelas("dados_games"))
+        #     )
+        # asyncio.run(main())
     except Exception as e:
         print(f"Erro na execução: {e}")
