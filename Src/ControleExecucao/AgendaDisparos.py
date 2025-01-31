@@ -34,12 +34,14 @@ class ScheduleJob(ExecutarColeta):
 
         self.categorias = CATEGORIAS
         self.relevancia = RELEVANCIA
+        self.lote_tamanho = LOTE_TAMANHO
+        self.tempo_intervalo_lote = TEMPO_INTERVALO_LOTE
 
         self.criar_tabela_fila_anterior()
                                                          
     def coletar_dados(self):
-        fila_atual = self.fila_tabelas()
-        self.salvar_fila_anterior(fila_atual)
+        # fila_atual = self.fila_tabelas()
+        # self.salvar_fila_anterior(fila_atual)
         
         # Executa a nova coleta
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
@@ -65,7 +67,7 @@ class ScheduleJob(ExecutarColeta):
     def criar_tabela_fila_anterior(self):
         query = """
         CREATE TABLE IF NOT EXISTS fila_anterior (
-            id INTEGER PRIMARY KEY,
+            id INTEGER,
             highlight TEXT,
             titulo TEXT,
             link TEXT,
@@ -131,14 +133,14 @@ class ScheduleJob(ExecutarColeta):
         return mudancas
     
     def envios_mensagens(self, itens=None):
-        async def main():
+        async def main(itens):
             if itens is None:
                 itens = self.fila_tabelas()
             await asyncio.gather(
                 self.enviar_menssagem_em_lotes(itens)
             )
-        asyncio.run(main())
-    
+        asyncio.run(main(itens))
+
     def agendar_tarefas(self):
         schedule.every().day.at("06:00").do(self.executar_tarefas)
 
@@ -157,7 +159,6 @@ class ScheduleJob(ExecutarColeta):
         mudancas = self.comparar_filas()
         
         if mudancas:
-            print("Enviando mensagens com itens alterados...")
             self.envios_mensagens(mudancas)
         else:
             print("Nenhuma mudança detectada.")
@@ -165,4 +166,4 @@ class ScheduleJob(ExecutarColeta):
 
 if __name__ == "__main__":
     agenda = ScheduleJob()
-    agenda.criar_tabela_fila_anterior()
+    agenda.executar_tarefas()

@@ -23,7 +23,7 @@ class OfertasCasaMoveisDecoracaoSpider(scrapy.Spider):
                 'titulo': produto.css('a.poly-component__title::text').get(),
                 'link': produto.css('a.poly-component__title::attr(href)').get(),
                 'vendido_por': produto.css('span.poly-component__seller::text').get(),
-                'nota': produto.css('span.poly-reviews__rating::text').get(),
+                'nota': produto.css('span.poly-reviews__rating::text').get(), #div.poly-card__footer a.poly-component__ads-promotions
                 'total_avaliacoes': produto.css('span.poly-reviews__total::text').get(),
                 'preco_anterior': preco_anterior,
                 'fracao_preco_anterior': produto.css('span.andes-money-amount__cents::text').get(),

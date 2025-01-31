@@ -67,7 +67,7 @@ class NotifyOfferBot:
 
         resultado = [(i, *row) for i, row in enumerate(resultado, start=1)]
 
-        return print(resultado)
+        return resultado
     
     async def enviar_menssagem_em_lotes(self, fila):
         lote_tamanho = self.lote_tamanho
