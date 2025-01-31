@@ -64,22 +64,6 @@ class ScheduleJob(ExecutarColeta):
             )
         asyncio.run(main())
 
-    def execucao_completa(self, horario):
-        if horario == PRIMEIRO_HORARIO_ENVIO:
-            self.coletar_dados()
-            self.tratar_dados()
-            self.envios_iniciais()
-
-    def configurar_agendador(self):
-        horarios = [PRIMEIRO_HORARIO_ENVIO, SEGUNDO_HORARIO_ENVIO, TERCEIRO_HORARIO_ENVIO]
-        for horario in horarios:
-            schedule.every().day.at(horario).do(self.execucao_completa, horario=horario)
-            
-    def executar_agendador(self):
-        self.configurar_agendador()
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
 
 if __name__ == "__main__":
     agenda = ScheduleJob()
