@@ -141,13 +141,6 @@ class ScheduleJob(ExecutarColeta):
             )
         asyncio.run(main(itens))
 
-    def agendar_tarefas(self):
-        schedule.every().day.at("06:00").do(self.executar_tarefas)
-
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
-
     def executar_tarefas(self):
         print("Executando coleta de dados...")
         self.coletar_dados()
