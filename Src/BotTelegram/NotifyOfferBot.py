@@ -110,7 +110,6 @@ class NotifyOfferBot:
 if __name__ == "__main__":
     try:
         exe = NotifyOfferBot()
-        exe.filtro_tabelas("dados_casa_moveis_decoracao")
         # async def main():
         #     await asyncio.gather(
         #         exe.enviar_menssagem_em_lotes(exe.filtro_tabelas("dados_casa_moveis_decoracao")),

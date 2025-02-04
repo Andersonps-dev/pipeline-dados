@@ -12,6 +12,7 @@ import sqlite3
 from tabulate import tabulate
 import sys
 import schedule
+import threading
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -38,12 +39,13 @@ class ScheduleJob(ExecutarColeta):
         self.tempo_intervalo_lote = TEMPO_INTERVALO_LOTE
 
         self.criar_tabela_fila_anterior()
+
+        self.rodando = True
                                                          
     def coletar_dados(self):
-        # fila_atual = self.fila_tabelas()
-        # self.salvar_fila_anterior(fila_atual)
+        fila_atual = self.fila_tabelas()
+        self.salvar_fila_anterior(fila_atual)
         
-        # Executa a nova coleta
         self.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")
         self.executar_scrapy("ofertas_games", "dados_games")
         
@@ -145,20 +147,31 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main(itens))
 
     def executar_tarefas(self):
-        while True:
-            print("Executando coleta de dados...")
+        while self.rodando:
             self.coletar_dados()
-            
-            print("Tratando dados...")
             self.tratar_dados()
-            
-            print("Comparando filas...")
             mudancas = self.comparar_filas()
-            
+
             if mudancas:
-                self.envios_mensagens(mudancas)
+                if not hasattr(self, "thread") or not self.thread.is_alive():
+                    self.thread = threading.Thread(target=self.enviar_mensagens, args=(mudancas,), daemon=True)
+                    self.thread.start()
             else:
-                time.sleep(3600)
+                print("Sem mudanças, aguardando 1 hora...")
+                for _ in range(60):
+                    if not self.rodando:
+                        return
+                    time.sleep(60)
+
+    def iniciar(self):
+        self.thread_execucao = threading.Thread(target=self.executar_tarefas, daemon=True)
+        self.thread_execucao.start()
+
+    def parar(self):
+        print("Parando processo...")
+        self.rodando = False
+        if hasattr(self, "thread_execucao"):
+            self.thread_execucao.join()
 
 
 if __name__ == "__main__":
