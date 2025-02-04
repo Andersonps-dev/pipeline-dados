@@ -116,7 +116,7 @@ class ScheduleJob(ExecutarColeta):
         fila_atual = self.fila_tabelas()
         mudancas = []
 
-        mapa_fila_anterior = {item[1]: item for item in fila_anterior}  # Usa 'titulo' como chave
+        mapa_fila_anterior = {item[1]: item for item in fila_anterior}
 
         for item in fila_atual:
             titulo, relevancia = item[2], item[16]
