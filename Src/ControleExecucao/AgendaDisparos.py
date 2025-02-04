@@ -90,6 +90,9 @@ class ScheduleJob(ExecutarColeta):
         self.conn.commit()
 
     def salvar_fila_anterior(self, fila):
+        if self.conn is None or self.conn.close:
+            self.conn = self.criar_conexao_sqlite3("dados_coletados.db")
+
         self.conn.execute("DELETE FROM fila_anterior")
         self.conn.commit()
 
@@ -136,10 +139,11 @@ class ScheduleJob(ExecutarColeta):
 
     def executar_tarefas(self):
         while True:
+            self.conn = self.criar_conexao_sqlite3("dados_coletados.db")  # Reabre conexão
             self.coletar_dados()
             self.tratar_dados()
             mudancas = self.comparar_filas()
-            
+
             if mudancas:
                 self.envios_mensagens(mudancas)
             else:
