@@ -105,9 +105,12 @@ class ScheduleJob(ExecutarColeta):
         self.conn.commit()
 
     def recuperar_fila_anterior(self):
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")  # Reabre a conexão
         query = "SELECT * FROM fila_anterior;"
-        cursor = self.conn.execute(query)
-        return cursor.fetchall()
+        cursor = conn.execute(query)
+        dados = cursor.fetchall()
+        conn.close()
+        return dados
     
     def comparar_filas(self):
         fila_anterior = self.recuperar_fila_anterior()
@@ -142,19 +145,20 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main(itens))
 
     def executar_tarefas(self):
-        print("Executando coleta de dados...")
-        self.coletar_dados()
-        
-        print("Tratando dados...")
-        self.tratar_dados()
-        
-        print("Comparando filas...")
-        mudancas = self.comparar_filas()
-        
-        if mudancas:
-            self.envios_mensagens(mudancas)
-        else:
-            print("Nenhuma mudança detectada.")
+        while True:
+            print("Executando coleta de dados...")
+            self.coletar_dados()
+            
+            print("Tratando dados...")
+            self.tratar_dados()
+            
+            print("Comparando filas...")
+            mudancas = self.comparar_filas()
+            
+            if mudancas:
+                self.envios_mensagens(mudancas)
+            else:
+                time.sleep(3600)
 
 
 if __name__ == "__main__":

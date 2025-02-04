@@ -140,6 +140,8 @@ class Transformacao(NotifyOfferBot):
 
         df["relevancia"] = df["pontuacao"].apply(classificar_relevancia)
 
+        df = df[df['porcentagem_desconto'] !=0]
+
         df.to_sql(nome_tabela_bd, self.criar_conexao_sqlite3(nome_bd), if_exists='replace', index=False)
 
     def criar_conexao_sqlite3(self, db_name):
