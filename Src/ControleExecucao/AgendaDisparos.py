@@ -112,18 +112,18 @@ class ScheduleJob(ExecutarColeta):
         return dados
     
     def comparar_filas(self):
-        fila_anterior = self.recuperar_fila_anterior()
-        fila_atual = self.fila_tabelas()
-        mudancas = []
+            fila_anterior = self.recuperar_fila_anterior()
+            fila_atual = self.fila_tabelas()
+            mudancas = []
 
-        mapa_fila_anterior = {item[1]: item for item in fila_anterior}
+            mapa_fila_anterior = {item[1]: item for item in fila_anterior}
 
-        for item in fila_atual:
-            titulo, relevancia = item[2], item[16]
-            if titulo not in mapa_fila_anterior or mapa_fila_anterior[titulo][2] != relevancia:
-                mudancas.append(item)
+            for item in fila_atual:
+                titulo, relevancia = item[2], item[16]
+                if titulo not in mapa_fila_anterior or mapa_fila_anterior[titulo][2] != relevancia:
+                    mudancas.append(item)
 
-        return mudancas
+            return mudancas
     
     def envios_mensagens(self, itens=None):
         async def main(itens):
@@ -135,21 +135,16 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main(itens))
 
     def executar_tarefas(self):
+        while True:
             self.coletar_dados()
             self.tratar_dados()
             mudancas = self.comparar_filas()
-
+            
             if mudancas:
-                asyncio.run(self.envio_mensagens_async(mudancas))
-
-    def iniciar_scheduler(self):
-        schedule.every(1).hours.do(self.executar_tarefas)
-        
-        while True:
-            schedule.run_pending()
-            time.sleep(10)
-
+                self.envios_mensagens(mudancas)
+            else:
+                time.sleep(3600)
 
 if __name__ == "__main__":
     agenda = ScheduleJob()
-    agenda.iniciar_scheduler()
+    agenda.executar_tarefas()
