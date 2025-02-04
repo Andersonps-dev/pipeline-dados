@@ -12,7 +12,6 @@ import sqlite3
 from tabulate import tabulate
 import sys
 import schedule
-import threading
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -39,8 +38,6 @@ class ScheduleJob(ExecutarColeta):
         self.tempo_intervalo_lote = TEMPO_INTERVALO_LOTE
 
         self.criar_tabela_fila_anterior()
-
-        self.rodando = True
                                                          
     def coletar_dados(self):
         fila_atual = self.fila_tabelas()
@@ -107,8 +104,8 @@ class ScheduleJob(ExecutarColeta):
         self.conn.commit()
 
     def recuperar_fila_anterior(self):
-        conn = self.criar_conexao_sqlite3("dados_coletados.db")  # Reabre a conexão
-        query = "SELECT * FROM fila_anterior;"
+        conn = self.criar_conexao_sqlite3("dados_coletados.db")
+        query = "SELECT id, titulo, relevancia FROM fila_anterior;"
         cursor = conn.execute(query)
         dados = cursor.fetchall()
         conn.close()
@@ -116,24 +113,15 @@ class ScheduleJob(ExecutarColeta):
     
     def comparar_filas(self):
         fila_anterior = self.recuperar_fila_anterior()
-        if not fila_anterior:
-            return self.fila_tabelas()
-        
         fila_atual = self.fila_tabelas()
         mudancas = []
 
-        mapa_fila_anterior = {item[2]: item for item in fila_anterior}
+        mapa_fila_anterior = {item[1]: item for item in fila_anterior}  # Usa 'titulo' como chave
 
         for item in fila_atual:
-            titulo = item[2]
-            relevancia = item[16]
-
-            if titulo not in mapa_fila_anterior:
+            titulo, relevancia = item[2], item[16]
+            if titulo not in mapa_fila_anterior or mapa_fila_anterior[titulo][2] != relevancia:
                 mudancas.append(item)
-            else:
-                item_anterior = mapa_fila_anterior[titulo]
-                if item_anterior[16] != relevancia:
-                    mudancas.append(item)
 
         return mudancas
     
@@ -147,33 +135,21 @@ class ScheduleJob(ExecutarColeta):
         asyncio.run(main(itens))
 
     def executar_tarefas(self):
-        while self.rodando:
             self.coletar_dados()
             self.tratar_dados()
             mudancas = self.comparar_filas()
 
             if mudancas:
-                if not hasattr(self, "thread") or not self.thread.is_alive():
-                    self.thread = threading.Thread(target=self.enviar_mensagens, args=(mudancas,), daemon=True)
-                    self.thread.start()
-            else:
-                print("Sem mudanças, aguardando 1 hora...")
-                for _ in range(60):
-                    if not self.rodando:
-                        return
-                    time.sleep(60)
+                asyncio.run(self.envio_mensagens_async(mudancas))
 
-    def iniciar(self):
-        self.thread_execucao = threading.Thread(target=self.executar_tarefas, daemon=True)
-        self.thread_execucao.start()
-
-    def parar(self):
-        print("Parando processo...")
-        self.rodando = False
-        if hasattr(self, "thread_execucao"):
-            self.thread_execucao.join()
+    def iniciar_scheduler(self):
+        schedule.every(1).hours.do(self.executar_tarefas)
+        
+        while True:
+            schedule.run_pending()
+            time.sleep(10)
 
 
 if __name__ == "__main__":
     agenda = ScheduleJob()
-    agenda.executar_tarefas()
+    agenda.iniciar_scheduler()
