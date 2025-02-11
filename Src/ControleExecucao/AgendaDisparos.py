@@ -108,25 +108,30 @@ class ScheduleJob(ExecutarColeta):
 
     def recuperar_fila_anterior(self):
         conn = self.criar_conexao_sqlite3("dados_coletados.db")
-        query = "SELECT id, titulo, relevancia FROM fila_anterior;"
+        query = "SELECT id, titulo, relevancia, preco_atual FROM fila_anterior;"
         cursor = conn.execute(query)
         dados = cursor.fetchall()
         conn.close()
         return dados
     
     def comparar_filas(self):
-            fila_anterior = self.recuperar_fila_anterior()
-            fila_atual = self.fila_tabelas()
-            mudancas = []
+        fila_anterior = self.recuperar_fila_anterior()
+        fila_atual = self.fila_tabelas()
+        mudancas = []
 
-            mapa_fila_anterior = {item[1]: item for item in fila_anterior}
+        mapa_fila_anterior = {item[1]: item for item in fila_anterior}
 
-            for item in fila_atual:
-                titulo, relevancia = item[2], item[16]
-                if titulo not in mapa_fila_anterior or mapa_fila_anterior[titulo][2] != relevancia:
+        for item in fila_atual:
+            titulo, preco_atual = item[2], item[16]
+
+            if titulo not in mapa_fila_anterior:
+                mudancas.append(item)
+            else:
+                preco_anterior = mapa_fila_anterior[titulo][3]
+                if preco_atual != preco_anterior:
                     mudancas.append(item)
 
-            return mudancas
+        return mudancas
     
     def envios_mensagens(self, itens=None):
         async def main(itens):
