@@ -144,7 +144,7 @@ class ScheduleJob(ExecutarColeta):
 
     def executar_tarefas(self):
         while True:
-            self.conn = self.criar_conexao_sqlite3("dados_coletados.db")  # Reabre conexão
+            self.conn = self.criar_conexao_sqlite3("dados_coletados.db")
             self.coletar_dados()
             self.tratar_dados()
             mudancas = self.comparar_filas()
