@@ -122,7 +122,7 @@ class ScheduleJob(ExecutarColeta):
         mapa_fila_anterior = {item[1]: item for item in fila_anterior}
 
         for item in fila_atual:
-            titulo, preco_atual = item[2], item[16]
+            titulo, preco_atual = item[2], item[8]
 
             if titulo not in mapa_fila_anterior:
                 mudancas.append(item)
@@ -152,7 +152,12 @@ class ScheduleJob(ExecutarColeta):
             if mudancas:
                 self.envios_mensagens(mudancas)
             else:
-                time.sleep(3600)
+                tempo = 3600
+                print(f'Nenhum mudança encontrada, proxima atualização em: {int(tempo/60)} Minutos...')
+                for i in range(tempo):
+                    sys.stdout.write("\r{}/{} Segundos ({} Minutos)".format(i, tempo, int(tempo/60)))
+                    sys.stdout.flush()
+                    time.sleep(1)
 
 if __name__ == "__main__":
     agenda = ScheduleJob()
