@@ -100,7 +100,7 @@ class NotifyOfferBot:
                         f"<a href='{link}'>🔗 Clique aqui para comprar</a>\n\n"
                     )
                     await self.enviar_telegram_message(mensagem)
-                    await asyncio.sleep(20)
+                    await asyncio.sleep(30)
 
                 print(f"Lote {i // lote_tamanho + 1} enviado. Aguardando {intervalo_lote} segundos antes do próximo lote...")
                 await asyncio.sleep(intervalo_lote)
