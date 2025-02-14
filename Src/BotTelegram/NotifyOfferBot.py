@@ -106,15 +106,3 @@ class NotifyOfferBot:
                 await asyncio.sleep(intervalo_lote)
         finally:
             await self.bot.close()
-
-if __name__ == "__main__":
-    try:
-        exe = NotifyOfferBot()
-        # async def main():
-        #     await asyncio.gather(
-        #         exe.enviar_menssagem_em_lotes(exe.filtro_tabelas("dados_casa_moveis_decoracao")),
-        #         exe.enviar_menssagem_em_lotes(exe.filtro_tabelas("dados_games"))
-        #     )
-        # asyncio.run(main())
-    except Exception as e:
-        print(f"Erro na execução: {e}")
