@@ -159,6 +159,6 @@ class ScheduleJob(ExecutarColeta):
                     sys.stdout.flush()
                     time.sleep(1)
 
-if __name__ == "__main__":
-    agenda = ScheduleJob()
-    agenda.executar_tarefas()
+
+agenda = ScheduleJob()
+agenda.executar_tarefas()
