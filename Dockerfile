@@ -1,5 +1,5 @@
 # Usa uma imagem base do Python
-FROM python:3.12-slim
+FROM python:3.11.0
 
 # Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
@@ -13,8 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia o código da aplicação para o contêiner
 COPY . .
 
-# Expõe a porta do PostgreSQL (opcional, caso o banco esteja no mesmo contêiner)
-EXPOSE 5432
-
 # Instrução CMD para rodar o aplicativo
-CMD ["python", "pipeline-dados\Src\BotTelegram\NotifyOfferBot.py"]
+CMD ["python", "\Src\ControleExecucao\AgendaDisparos.py"]
