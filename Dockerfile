@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Instala as dependências do Python
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o código da aplicação para o contêiner
 COPY . .
