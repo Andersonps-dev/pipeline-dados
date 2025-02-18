@@ -8,10 +8,10 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Instala as dependências do Python
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copia o código da aplicação para o contêiner
 COPY . .
 
 # Instrução CMD para rodar o aplicativo
-CMD ["python", "\Src\ControleExecucao\AgendaDisparos.py"]
+CMD ["python", "Src/ControleExecucao/AgendaDisparos.py"]
