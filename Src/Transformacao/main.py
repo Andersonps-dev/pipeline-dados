@@ -22,9 +22,10 @@ class Transformacao(NotifyOfferBot):
 
         self.palavras_chaves = PALAVRAS_CHAVES
 
-        self.pasta_dados = r'..\pipeline-dados\Dados'
+        self.pasta_dados = 'Dados'
     
     def tratar_base(self, conn=None, nome_arquivo=None, nome_tabela_bd=None, nome_bd='dados_coletados.db', topic_id=None):
+        print(os.path.join(self.pasta_dados, nome_arquivo))
         caminho = os.path.join(self.pasta_dados, nome_arquivo)
         
         df = pd.read_json(caminho, lines=True, dtype={"preco_anterior": str, "fracao_preco_anterior":str, "preco_atual":str, "fracao_preco_atual":str})
