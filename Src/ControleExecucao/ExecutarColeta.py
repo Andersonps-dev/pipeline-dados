@@ -21,16 +21,11 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
         try:
             scrapy_dir = os.path.join(self.diretorio_principal, "Src", "Coleta", "Coleta", "spiders")
             os.chdir(scrapy_dir)
-            comando = f"scrapy crawl {coleta} -O Dados\{nome_arquivo}.jsonl"
+
+            caminho_saida = os.path.join("..", "..", "..", "..", "Dados", f"{nome_arquivo}.jsonl")
+
+            comando = f"scrapy crawl {coleta} -O {caminho_saida}"
             print(f"Executando: {comando}")
             subprocess.run(comando, shell=True, check=True)
         finally:
             os.chdir(self.diretorio_principal)
-
-if __name__ == "__main__":
-    try:
-        exe = ExecutarColeta()
-        exe.executar_scrapy("ofertas_games", "dados_games")
-        exe.executar_scrapy("ofertas_casa_moveis_decoracao", "dados_casa_moveis_decoracao")        
-    except Exception as e:
-        print(f"Erro ao executar coleta: {e}")
