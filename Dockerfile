@@ -10,6 +10,10 @@ COPY requirements.txt .
 # Instala as dependências do Python
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN mkdir -p /app/Dados
+
+WORKDIR /app
+
 # Copia o código da aplicação para o contêiner
 COPY . .
 

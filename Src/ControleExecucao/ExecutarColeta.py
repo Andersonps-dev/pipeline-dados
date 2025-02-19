@@ -22,7 +22,7 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
             scrapy_dir = os.path.join(self.diretorio_principal, "Src", "Coleta", "Coleta", "spiders")
             os.chdir(scrapy_dir)
 
-            caminho_saida = os.path.join("..", "..", "..", "..", "Dados", f"{nome_arquivo}.jsonl")
+            caminho_saida = os.path.join("/app", "Dados", f"{nome_arquivo}.jsonl")
 
             comando = f"scrapy crawl {coleta} -O {caminho_saida}"
             print(f"Executando: {comando}")
