@@ -21,10 +21,7 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
         try:
             scrapy_dir = os.path.join(self.diretorio_principal, "Src", "Coleta", "Coleta", "spiders")
             os.chdir(scrapy_dir)
-
-            caminho_saida = os.path.join("/app", "Dados", f"{nome_arquivo}.jsonl")
-
-            comando = f"scrapy crawl {coleta} -O {caminho_saida}"
+            comando = f"scrapy crawl {coleta} -O ..\..\..\..\Dados\{nome_arquivo}.jsonl"
             print(f"Executando: {comando}")
             subprocess.run(comando, shell=True, check=True)
         finally:
