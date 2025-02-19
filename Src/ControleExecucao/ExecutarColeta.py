@@ -26,3 +26,4 @@ class ExecutarColeta(Transformacao, NotifyOfferBot):
             subprocess.run(comando, shell=True, check=True)
         finally:
             os.chdir(self.diretorio_principal)
+
